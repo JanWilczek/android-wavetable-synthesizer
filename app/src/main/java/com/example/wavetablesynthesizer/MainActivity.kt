@@ -13,6 +13,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.wavetablesynthesizer.ui.theme.WavetableSynthesizerTheme
@@ -188,8 +189,8 @@ private fun WavetableButton(modifier: Modifier, representedWavetable: Wavetable,
   }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, device = Devices.AUTOMOTIVE_1024p, widthDp = 1024, heightDp = 720)
 @Composable
 fun WavetableSynthesizerPreview() {
-  WavetableSynthesizerApp(Modifier)
+  WavetableSynthesizerApp(Modifier, WavetableSynthesizerViewModel(LoggingWavetableSynthesizer()))
 }
