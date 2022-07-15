@@ -175,7 +175,7 @@ private fun WavetableSelectionButtons(modifier: Modifier, wavetable: MutableStat
 
 @Composable
 private fun WavetableButton(modifier: Modifier, representedWavetable: Wavetable, wavetable: MutableState<Wavetable>) {
-  Button(onClick = {
+  Button(modifier = modifier, onClick = {
     wavetable.value = representedWavetable
   }) {
     Text(representedWavetable.toString())
