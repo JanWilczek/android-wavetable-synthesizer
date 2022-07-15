@@ -4,37 +4,41 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.wavetablesynthesizer.ui.theme.WavetableSynthesizerTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 class MainActivity : ComponentActivity() {
 
+  private val synthesizerViewModel: WavetableSynthesizerViewModel by viewModels {
+    WavetableSynthesizerViewModelFactory(LoggingWavetableSynthesizer())
+  }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-    setContent {
-      WavetableSynthesizerTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-          WavetableSynthesizerApp(Modifier)
+    override fun onCreate(savedInstanceState: Bundle?) {
+      super.onCreate(savedInstanceState)
+      requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+      setContent {
+        WavetableSynthesizerTheme {
+          // A surface container using the 'background' color from the theme
+          Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+            WavetableSynthesizerApp(Modifier, synthesizerViewModel)
+          }
         }
       }
     }
   }
-}
 
-enum class Wavetable {
-  SINE, TRIANGLE, SQUARE, SAW
-}
 
 class SynthesizerState(
   val frequency : MutableState<Float>,
@@ -54,7 +58,7 @@ fun rememberSynthesizerState(
 }
 
 @Composable
-fun WavetableSynthesizerApp(modifier: Modifier) {
+fun WavetableSynthesizerApp(modifier: Modifier, synthesizerViewModel: WavetableSynthesizerViewModel = viewModel()) {
   val synthesizerState = rememberSynthesizerState()
 
   WavetableSynthesizerTheme {
@@ -64,13 +68,13 @@ fun WavetableSynthesizerApp(modifier: Modifier) {
       verticalArrangement = Arrangement.Top,
     ) {
       WavetableSelectionPanel(modifier, synthesizerState.wavetable)
-      ControlsPanel(modifier, synthesizerState.frequency, synthesizerState.volumeInDecibels)
+      ControlsPanel(modifier, synthesizerViewModel, synthesizerState.volumeInDecibels)
     }
   }
 }
 
 @Composable
-private fun ControlsPanel(modifier: Modifier, frequency: MutableState<Float>, volumeInDecibels: MutableState<Float>) {
+private fun ControlsPanel(modifier: Modifier, synthesizerViewModel: WavetableSynthesizerViewModel, volumeInDecibels: MutableState<Float>) {
   Row(
     modifier = Modifier
       .fillMaxWidth()
@@ -82,7 +86,7 @@ private fun ControlsPanel(modifier: Modifier, frequency: MutableState<Float>, vo
       modifier = modifier.fillMaxWidth()
     ) {
       Row() {
-        PitchControl(modifier, frequency)
+        PitchControl(modifier, synthesizerViewModel)
         VolumeControl(modifier, volumeInDecibels)
       }
       Row(
@@ -108,20 +112,22 @@ private fun PlayControl() {
 @Composable
 private fun PitchControl(
   modifier: Modifier,
-  frequency: MutableState<Float>
+  synthesizerViewModel: WavetableSynthesizerViewModel
 ) {
+  val frequency = synthesizerViewModel.frequency.observeAsState()
+
   Column(
     modifier = modifier.fillMaxWidth(0.7f),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     Text("Frequency")
-    Slider(value = frequency.value, onValueChange = {
-      frequency.value = it
+    Slider(value = frequency.value ?: 0f, onValueChange = {
+      synthesizerViewModel.setFrequency(it)
     }, valueRange = 16f..16000f)
     Row(
       horizontalArrangement = Arrangement.Center
     ) {
-      Text(text = frequency.value.toString())
+      Text(text = frequency.toString())
       Text(" Hz")
     }
   }
@@ -133,7 +139,7 @@ private fun VolumeControl(modifier: Modifier, volumeInDecibels: MutableState<Flo
     modifier = modifier.fillMaxWidth()
   ) {
 //    Icon(imageVector = Icons.Filled.VolumeUp, contentDescription = null)
-    Slider(value = volumeInDecibels.value, onValueChange = { volumeInDecibels.value = it }, modifier = modifier.rotate(270f), valueRange = -60f..0f)
+    Slider(value = volumeInDecibels.value, onValueChange = { volumeInDecibels.value = it }, modifier = modifier.rotate(270f), valueRange = (-60f)..0f)
 //    Icon(imageVector = Icons.Filled.VolumeMute, contentDescription = null)
   }
 }
