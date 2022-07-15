@@ -15,11 +15,40 @@ class WavetableSynthesizerViewModel(
     get() {
       return _frequency
     }
+  val frequencyRange = 16f..16000f
+
+  private val _volume = MutableLiveData(0f)
+  val volume: LiveData<Float>
+    get() {
+      return _volume
+    }
+  val volumeRange = (-60f)..0f
 
   fun setFrequency(frequencyInHz: Float) {
     _frequency.value = frequencyInHz
     wavetableSynthesizer.setFrequency(frequencyInHz)
   }
+
+  fun setVolume(volumeInDb: Float) {
+    _volume.value = volumeInDb
+    wavetableSynthesizer.setVolume(volumeInDb)
+  }
+
+  fun playClicked() {
+    if (wavetableSynthesizer.isPlaying()) {
+      wavetableSynthesizer.stop()
+      _playButtonLabel.value = "Play"
+    } else {
+      wavetableSynthesizer.play()
+      _playButtonLabel.value = "Stop"
+    }
+  }
+
+  private val _playButtonLabel = MutableLiveData("Play")
+  val playButtonLabel: LiveData<String>
+    get() {
+      return _playButtonLabel
+    }
 }
 
 class WavetableSynthesizerViewModelFactory(

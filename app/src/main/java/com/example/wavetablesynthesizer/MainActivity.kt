@@ -98,7 +98,7 @@ private fun ControlsPanel(
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
       PitchControl(modifier, synthesizerViewModel)
-      PlayControl()
+      PlayControl(modifier, synthesizerViewModel)
     }
     Column(
       verticalArrangement = Arrangement.Center,
@@ -114,10 +114,14 @@ private fun ControlsPanel(
 }
 
 @Composable
-private fun PlayControl() {
-  Button(onClick = {
+private fun PlayControl(modifier: Modifier, synthesizerViewModel: WavetableSynthesizerViewModel) {
+  val playButtonLabel = synthesizerViewModel.playButtonLabel.observeAsState()
+
+  Button(modifier = modifier,
+    onClick = {
+      synthesizerViewModel.playClicked()
   }) {
-    Text("Play")
+    Text(playButtonLabel.value ?: "")
   }
 }
 
@@ -128,9 +132,9 @@ private fun PitchControl(
 ) {
   val frequency = synthesizerViewModel.frequency.observeAsState()
   Text("Frequency")
-  Slider(value = frequency.value ?: 0f, onValueChange = {
+  Slider(value = frequency.value ?: synthesizerViewModel.frequencyRange.start, onValueChange = {
     synthesizerViewModel.setFrequency(it)
-  }, valueRange = 16f..16000f)
+  }, valueRange = synthesizerViewModel.frequencyRange)
   Row(
     horizontalArrangement = Arrangement.Center
   ) {

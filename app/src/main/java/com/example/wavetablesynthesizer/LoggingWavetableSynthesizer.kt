@@ -4,16 +4,20 @@ import android.util.Log
 
 class LoggingWavetableSynthesizer : WavetableSynthesizer {
 
+  private var isPlaying = false
+
   override fun play() {
-    TODO("Not yet implemented")
+    Log.d("LoggingWavetableSynthesizer", "play() called.")
+    isPlaying = true
   }
 
   override fun stop() {
-    TODO("Not yet implemented")
+    Log.d("LoggingWavetableSynthesizer", "stop() called.")
+    isPlaying = false
   }
 
   override fun isPlaying(): Boolean {
-    TODO("Not yet implemented")
+    return isPlaying
   }
 
   override fun setFrequency(frequencyInHz: Float) {
