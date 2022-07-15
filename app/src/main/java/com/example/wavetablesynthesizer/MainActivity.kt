@@ -75,7 +75,7 @@ fun WavetableSynthesizerApp(
       verticalArrangement = Arrangement.Top,
     ) {
       WavetableSelectionPanel(modifier, synthesizerState.wavetable)
-      ControlsPanel(modifier, synthesizerViewModel, synthesizerState.volumeInDecibels)
+      ControlsPanel(modifier, synthesizerViewModel)
     }
   }
 }
@@ -83,8 +83,7 @@ fun WavetableSynthesizerApp(
 @Composable
 private fun ControlsPanel(
   modifier: Modifier,
-  synthesizerViewModel: WavetableSynthesizerViewModel,
-  volumeInDecibels: MutableState<Float>
+  synthesizerViewModel: WavetableSynthesizerViewModel
 ) {
   Row(
     modifier = Modifier
@@ -108,7 +107,7 @@ private fun ControlsPanel(
         .fillMaxHeight()
         .padding(vertical = 40.dp)
     ) {
-      VolumeControl(modifier, volumeInDecibels)
+      VolumeControl(modifier, synthesizerViewModel)
     }
   }
 }
@@ -144,13 +143,15 @@ private fun PitchControl(
 }
 
 @Composable
-private fun VolumeControl(modifier: Modifier, volumeInDecibels: MutableState<Float>) {
+private fun VolumeControl(modifier: Modifier, synthesizerViewModel: WavetableSynthesizerViewModel) {
+  val volume = synthesizerViewModel.volume.observeAsState()
+
   Icon(imageVector = Icons.Filled.VolumeUp, contentDescription = null)
   Slider(
-    value = volumeInDecibels.value,
-    onValueChange = { volumeInDecibels.value = it },
+    value = volume.value ?: synthesizerViewModel.volumeRange.endInclusive,
+    onValueChange = { synthesizerViewModel.setVolume(it) },
     modifier = modifier.rotate(270f),
-    valueRange = (-60f)..0f
+    valueRange = synthesizerViewModel.volumeRange
   )
   Icon(imageVector = Icons.Filled.VolumeMute, contentDescription = null)
 }

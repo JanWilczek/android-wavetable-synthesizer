@@ -21,11 +21,11 @@ class LoggingWavetableSynthesizer : WavetableSynthesizer {
   }
 
   override fun setFrequency(frequencyInHz: Float) {
-    Log.d("LoggingWavetableSynthesizer", "Frequency set to " + frequencyInHz.toString() + "Hz.")
+    Log.d("LoggingWavetableSynthesizer", "Frequency set to " + frequencyInHz.toString() + " Hz.")
   }
 
   override fun setVolume(volumeInDb: Float) {
-    TODO("Not yet implemented")
+    Log.d("LoggingWavetableSynthesizer", "Volume set to " + volumeInDb.toString() + " dB.")
   }
 
   override fun setWavetable(wavetable: Wavetable) {
