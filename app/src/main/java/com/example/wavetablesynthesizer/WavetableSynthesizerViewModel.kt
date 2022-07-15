@@ -34,6 +34,10 @@ class WavetableSynthesizerViewModel(
     wavetableSynthesizer.setVolume(volumeInDb)
   }
 
+  fun setWavetable(wavetable: Wavetable) {
+    wavetableSynthesizer.setWavetable(wavetable)
+  }
+
   fun playClicked() {
     if (wavetableSynthesizer.isPlaying()) {
       wavetableSynthesizer.stop()

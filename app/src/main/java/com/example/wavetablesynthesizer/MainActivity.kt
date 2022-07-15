@@ -10,11 +10,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.VolumeMute
 import androidx.compose.material.icons.filled.VolumeUp
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -45,36 +42,18 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-
-class SynthesizerState(
-  val wavetable: MutableState<Wavetable>,
-  val volumeInDecibels: MutableState<Float>
-) {
-
-}
-
-@Composable
-fun rememberSynthesizerState(
-  wavetable: MutableState<Wavetable> = remember { mutableStateOf(Wavetable.SINE) },
-  volumeInDecibels: MutableState<Float> = remember { mutableStateOf(0f) }
-) = remember(wavetable, volumeInDecibels) {
-  SynthesizerState(wavetable, volumeInDecibels)
-}
-
 @Composable
 fun WavetableSynthesizerApp(
   modifier: Modifier,
   synthesizerViewModel: WavetableSynthesizerViewModel = viewModel()
 ) {
-  val synthesizerState = rememberSynthesizerState()
-
   WavetableSynthesizerTheme {
     Column(
       modifier = Modifier.fillMaxSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Top,
     ) {
-      WavetableSelectionPanel(modifier, synthesizerState.wavetable)
+      WavetableSelectionPanel(modifier, synthesizerViewModel)
       ControlsPanel(modifier, synthesizerViewModel)
     }
   }
@@ -119,7 +98,7 @@ private fun PlayControl(modifier: Modifier, synthesizerViewModel: WavetableSynth
   Button(modifier = modifier,
     onClick = {
       synthesizerViewModel.playClicked()
-  }) {
+    }) {
     Text(playButtonLabel.value ?: "")
   }
 }
@@ -157,7 +136,10 @@ private fun VolumeControl(modifier: Modifier, synthesizerViewModel: WavetableSyn
 }
 
 @Composable
-private fun WavetableSelectionPanel(modifier: Modifier, wavetable: MutableState<Wavetable>) {
+private fun WavetableSelectionPanel(
+  modifier: Modifier,
+  synthesizerViewModel: WavetableSynthesizerViewModel
+) {
   Row(
     modifier = modifier
       .fillMaxWidth()
@@ -173,37 +155,27 @@ private fun WavetableSelectionPanel(modifier: Modifier, wavetable: MutableState<
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Text("Wavetable")
-      WavetableSelectionButtons(modifier, wavetable)
+      WavetableSelectionButtons(modifier, synthesizerViewModel)
     }
   }
 }
 
 @Composable
-private fun WavetableSelectionButtons(modifier: Modifier, wavetable: MutableState<Wavetable>) {
+private fun WavetableSelectionButtons(
+  modifier: Modifier,
+  synthesizerViewModel: WavetableSynthesizerViewModel
+) {
   Row(
     modifier = modifier.fillMaxWidth(),
     horizontalArrangement = Arrangement.SpaceEvenly
   ) {
-    WavetableButton(
-      modifier = modifier,
-      representedWavetable = Wavetable.SINE,
-      wavetable = wavetable
-    )
-    WavetableButton(
-      modifier = modifier,
-      representedWavetable = Wavetable.TRIANGLE,
-      wavetable = wavetable
-    )
-    WavetableButton(
-      modifier = modifier,
-      representedWavetable = Wavetable.SQUARE,
-      wavetable = wavetable
-    )
-    WavetableButton(
-      modifier = modifier,
-      representedWavetable = Wavetable.SAW,
-      wavetable = wavetable
-    )
+    for (wavetable in Wavetable.values()) {
+      WavetableButton(
+        modifier = modifier,
+        representedWavetable = wavetable,
+        synthesizerViewModel = synthesizerViewModel
+      )
+    }
   }
 }
 
@@ -211,10 +183,10 @@ private fun WavetableSelectionButtons(modifier: Modifier, wavetable: MutableStat
 private fun WavetableButton(
   modifier: Modifier,
   representedWavetable: Wavetable,
-  wavetable: MutableState<Wavetable>
+  synthesizerViewModel: WavetableSynthesizerViewModel
 ) {
   Button(modifier = modifier, onClick = {
-    wavetable.value = representedWavetable
+    synthesizerViewModel.setWavetable(representedWavetable)
   }) {
     Text(representedWavetable.toString())
   }
