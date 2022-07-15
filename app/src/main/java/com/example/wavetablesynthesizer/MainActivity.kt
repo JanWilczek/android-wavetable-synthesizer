@@ -127,7 +127,7 @@ private fun PitchControl(
     Row(
       horizontalArrangement = Arrangement.Center
     ) {
-      Text(text = frequency.toString())
+      Text(text = frequency.value.toString())
       Text(" Hz")
     }
   }
