@@ -25,7 +25,7 @@ import com.thewolfsound.wavetablesynthesizer.ui.theme.WavetableSynthesizerTheme
 class MainActivity : ComponentActivity() {
 
   private val synthesizerViewModel: WavetableSynthesizerViewModel by viewModels {
-    WavetableSynthesizerViewModelFactory(LoggingWavetableSynthesizer())
+    WavetableSynthesizerViewModelFactory(NativeWavetableSynthesizer())
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
