@@ -1,4 +1,4 @@
-package com.example.wavetablesynthesizer.ui.theme
+package com.thewolfsound.wavetablesynthesizer.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

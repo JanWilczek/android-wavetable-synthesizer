@@ -1,4 +1,4 @@
-package com.example.wavetablesynthesizer
+package com.thewolfsound.wavetablesynthesizer
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -20,6 +20,6 @@ class ExampleInstrumentedTest {
   fun useAppContext() {
     // Context of the app under test.
     val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-    assertEquals("com.example.wavetablesynthesizer", appContext.packageName)
+    assertEquals("com.thewolfsound.wavetablesynthesizer", appContext.packageName)
   }
 }

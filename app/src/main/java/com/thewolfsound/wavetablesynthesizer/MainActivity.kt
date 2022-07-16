@@ -1,4 +1,4 @@
-package com.example.wavetablesynthesizer
+package com.thewolfsound.wavetablesynthesizer
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.wavetablesynthesizer.ui.theme.WavetableSynthesizerTheme
+import com.thewolfsound.wavetablesynthesizer.ui.theme.WavetableSynthesizerTheme
 
 
 class MainActivity : ComponentActivity() {

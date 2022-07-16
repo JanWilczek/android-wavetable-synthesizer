@@ -1,4 +1,4 @@
-package com.example.wavetablesynthesizer
+package com.thewolfsound.wavetablesynthesizer
 
 import org.junit.Test
 

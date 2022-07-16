@@ -1,4 +1,4 @@
-package com.example.wavetablesynthesizer.ui.theme
+package com.thewolfsound.wavetablesynthesizer.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
