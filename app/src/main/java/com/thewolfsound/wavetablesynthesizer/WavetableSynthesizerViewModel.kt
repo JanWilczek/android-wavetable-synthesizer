@@ -14,7 +14,7 @@ class WavetableSynthesizerViewModel(
     get() {
       return _frequency
     }
-  val frequencyRange = 16f..16000f
+  val frequencyRange = 60f..6000f
 
   private val _volume = MutableLiveData(0f)
   val volume: LiveData<Float>
