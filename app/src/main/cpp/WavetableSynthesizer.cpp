@@ -4,9 +4,15 @@
 namespace wavetablesynthesizer {
     WavetableSynthesizer::~WavetableSynthesizer() = default;
 
-    bool WavetableSynthesizer::isPlaying() {}
+    bool WavetableSynthesizer::isPlaying() {
+        LOGD("isPlaying() called");
+        return _isPlaying;
+    }
 
-    void WavetableSynthesizer::play() {}
+    void WavetableSynthesizer::play() {
+        LOGD("play() called");
+        _isPlaying = true;
+    }
 
     void WavetableSynthesizer::setFrequency(float frequencyInHz) {
         LOGD("Frequency set to %.2f Hz.", frequencyInHz);
@@ -16,5 +22,8 @@ namespace wavetablesynthesizer {
 
     void WavetableSynthesizer::setWavetable(Wavetable wavetable) {}
 
-    void WavetableSynthesizer::stop() {}
+    void WavetableSynthesizer::stop() {
+        LOGD("stop() called");
+        _isPlaying = false;
+    }
 }

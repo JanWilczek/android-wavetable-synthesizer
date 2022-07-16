@@ -29,6 +29,40 @@ extern "C" {
     }
 
     JNIEXPORT void JNICALL
+    Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_play(JNIEnv* env, jobject obj, jlong synthesizerHandle) {
+        auto* synthesizer = reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer*>(synthesizerHandle);
+
+        if (synthesizer) {
+            synthesizer->play();
+        } else {
+            LOGD("Synthesizer not created. Please, create the synthesizer first by calling create().");
+        }
+    }
+
+    JNIEXPORT void JNICALL
+    Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_stop(JNIEnv* env, jobject obj, jlong synthesizerHandle) {
+        auto* synthesizer = reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer*>(synthesizerHandle);
+
+        if (synthesizer) {
+            synthesizer->stop();
+        } else {
+            LOGD("Synthesizer not created. Please, create the synthesizer first by calling create().");
+        }
+    }
+
+    JNIEXPORT jboolean JNICALL
+    Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_isPlaying(JNIEnv* env, jobject obj, jlong synthesizerHandle) {
+        auto* synthesizer = reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer*>(synthesizerHandle);
+
+        if (not synthesizer) {
+            LOGD("Synthesizer not created. Please, create the synthesizer first by calling create().");
+            return false;
+        }
+
+        return synthesizer->isPlaying();
+    }
+
+    JNIEXPORT void JNICALL
     Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_setFrequency(JNIEnv* env, jobject obj, jlong synthesizerHandle, jfloat frequencyInHz) {
         auto* synthesizer = reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer*>(synthesizerHandle);
         const auto nativeFrequency = static_cast<float>(frequencyInHz);

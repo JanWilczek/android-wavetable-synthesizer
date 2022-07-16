@@ -21,5 +21,8 @@ namespace wavetablesynthesizer {
         virtual void setVolume(float volumeInDb);
 
         virtual void setWavetable(Wavetable wavetable);
+
+    private:
+        bool _isPlaying = false;
     };
 }

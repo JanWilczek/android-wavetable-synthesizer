@@ -5,6 +5,9 @@ class NativeWavetableSynthesizer : WavetableSynthesizer {
   private var synthesizerHandle: Long = 0
   private external fun create(): Long
   private external fun delete(synthesizerHandle: Long)
+  private external fun play(synthesizerHandle: Long)
+  private external fun stop(synthesizerHandle: Long)
+  private external fun isPlaying(synthesizerHandle: Long): Boolean
   private external fun setFrequency(synthesizerHandle: Long, frequencyInHz: Float)
 
   companion object {
@@ -24,15 +27,15 @@ class NativeWavetableSynthesizer : WavetableSynthesizer {
   }
 
   override fun play() {
-    TODO("Not yet implemented")
+    play(synthesizerHandle)
   }
 
   override fun stop() {
-    TODO("Not yet implemented")
+    stop(synthesizerHandle)
   }
 
   override fun isPlaying(): Boolean {
-    TODO("Not yet implemented")
+    return isPlaying(synthesizerHandle)
   }
 
   override fun setFrequency(frequencyInHz: Float) {
