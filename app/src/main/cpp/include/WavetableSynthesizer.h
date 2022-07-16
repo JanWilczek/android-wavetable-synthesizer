@@ -1,6 +1,12 @@
 #pragma once
+#include <memory>
+#include <mutex>
 
 namespace wavetablesynthesizer {
+    class WavetableOscillator;
+    class AudioPlayer;
+
+    constexpr auto samplingRate = 48000;
 
     enum class Wavetable {
         SINE, TRIANGLE, SQUARE, SAW
@@ -8,6 +14,8 @@ namespace wavetablesynthesizer {
 
     class WavetableSynthesizer {
     public:
+
+        WavetableSynthesizer();
         virtual ~WavetableSynthesizer();
 
         virtual void play();
@@ -24,5 +32,8 @@ namespace wavetablesynthesizer {
 
     private:
         bool _isPlaying = false;
+        std::mutex _mutex;
+        std::shared_ptr<WavetableOscillator> _oscillator;
+        std::unique_ptr<AudioPlayer> _audioPlayer;
     };
 }
