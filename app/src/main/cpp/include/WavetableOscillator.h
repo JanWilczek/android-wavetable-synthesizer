@@ -13,6 +13,8 @@ namespace wavetablesynthesizer {
 
         void setFrequency(float frequency);
 
+        void setAmplitude(float newAmplitude);
+
         void onPlaybackStopped() override;
 
     private:
@@ -22,6 +24,6 @@ namespace wavetablesynthesizer {
         std::atomic<float> indexIncrement{0.f};
         std::vector<float> waveTable;
         float sampleRate;
-        float amplitude = 1.f;
+        std::atomic<float> amplitude {1.f};
     };
 }

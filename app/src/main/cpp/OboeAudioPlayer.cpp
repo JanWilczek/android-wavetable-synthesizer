@@ -19,6 +19,7 @@ namespace wavetablesynthesizer {
         ->setSharingMode(SharingMode::Exclusive)
         ->setFormat(AudioFormat::Float)
         ->setChannelCount(channelCount)
+        ->setSampleRateConversionQuality(SampleRateConversionQuality::Best)
         ->openStream(_stream);
 
         if (result != Result::OK) {

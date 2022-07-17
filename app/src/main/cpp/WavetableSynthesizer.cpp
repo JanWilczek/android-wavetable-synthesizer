@@ -1,9 +1,15 @@
+#include <cmath>
 #include "Log.h"
 #include "WavetableSynthesizer.h"
 #include "WavetableOscillator.h"
 #include "OboeAudioPlayer.h"
 
+
 namespace wavetablesynthesizer {
+    float dBToAmplitude(float dB) {
+        return std::pow(10.f, dB / 20.f);
+    }
+
     WavetableSynthesizer::WavetableSynthesizer()
         : _oscillator{std::make_shared<WavetableOscillator>(generateSineWaveTable(), samplingRate)}
         , _audioPlayer{std::make_unique<OboeAudioPlayer>(_oscillator, samplingRate)}
@@ -32,7 +38,11 @@ namespace wavetablesynthesizer {
         _oscillator->setFrequency(frequencyInHz);
     }
 
-    void WavetableSynthesizer::setVolume(float volumeInDb) {}
+    void WavetableSynthesizer::setVolume(float volumeInDb) {
+        LOGD("Volume set to %.2f dB.", volumeInDb);
+        const auto amplitude = dBToAmplitude(volumeInDb);
+        _oscillator->setAmplitude(amplitude);
+    }
 
     void WavetableSynthesizer::setWavetable(Wavetable wavetable) {}
 

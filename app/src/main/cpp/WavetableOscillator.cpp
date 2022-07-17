@@ -46,4 +46,8 @@ namespace wavetablesynthesizer {
         return waveTable[nextIndex] * nextIndexWeight +
                (1.f - nextIndexWeight) * waveTable[truncatedIndex];
     }
+
+    void WavetableOscillator::setAmplitude(float newAmplitude) {
+        amplitude.store(newAmplitude);
+    }
 }

@@ -9,6 +9,7 @@ class NativeWavetableSynthesizer : WavetableSynthesizer {
   private external fun stop(synthesizerHandle: Long)
   private external fun isPlaying(synthesizerHandle: Long): Boolean
   private external fun setFrequency(synthesizerHandle: Long, frequencyInHz: Float)
+  private external fun setVolume(synthesizerHandle: Long, amplitudeInDb: Float)
 
   companion object {
     init {
@@ -43,7 +44,7 @@ class NativeWavetableSynthesizer : WavetableSynthesizer {
   }
 
   override fun setVolume(volumeInDb: Float) {
-    TODO("Not yet implemented")
+    setVolume(synthesizerHandle, volumeInDb)
   }
 
   override fun setWavetable(wavetable: Wavetable) {

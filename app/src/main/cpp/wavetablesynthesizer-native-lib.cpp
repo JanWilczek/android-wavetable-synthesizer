@@ -73,4 +73,16 @@ extern "C" {
             LOGD("Synthesizer not created. Please, create the synthesizer first by calling create().");
         }
     }
+
+    JNIEXPORT void JNICALL
+    Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_setVolume(JNIEnv* env, jobject obj, jlong synthesizerHandle, jfloat volumeInDb) {
+        auto* synthesizer = reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer*>(synthesizerHandle);
+        const auto nativeVolume = static_cast<float>(volumeInDb);
+
+        if (synthesizer) {
+            synthesizer->setVolume(nativeVolume);
+        } else {
+            LOGD("Synthesizer not created. Please, create the synthesizer first by calling create().");
+        }
+    }
 }
