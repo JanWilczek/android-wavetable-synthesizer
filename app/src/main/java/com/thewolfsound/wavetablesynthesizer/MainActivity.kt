@@ -15,6 +15,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -84,7 +86,6 @@ private fun ControlsPanel(
       modifier = modifier
         .fillMaxWidth()
         .fillMaxHeight()
-        .padding(vertical = 40.dp)
     ) {
       VolumeControl(modifier, synthesizerViewModel)
     }
@@ -124,14 +125,21 @@ private fun PitchControl(
 @Composable
 private fun VolumeControl(modifier: Modifier, synthesizerViewModel: WavetableSynthesizerViewModel) {
   val volume = synthesizerViewModel.volume.observeAsState()
+  val sliderHeight = remember { mutableStateOf(0) }
 
   Icon(imageVector = Icons.Filled.VolumeUp, contentDescription = null)
-  Slider(
-    value = volume.value ?: synthesizerViewModel.volumeRange.endInclusive,
-    onValueChange = { synthesizerViewModel.setVolume(it) },
-    modifier = modifier.rotate(270f),
-    valueRange = synthesizerViewModel.volumeRange
+  Column(
+    modifier = modifier.fillMaxWidth().fillMaxHeight(0.8f).offset(y = 40.dp).onSizeChanged { sliderHeight.value = (0.3f * it.height.toFloat()).toInt() },
+    horizontalAlignment = Alignment.CenterHorizontally
   )
+  {
+    Slider(
+      value = volume.value ?: synthesizerViewModel.volumeRange.endInclusive,
+      onValueChange = { synthesizerViewModel.setVolume(it) },
+      modifier = modifier.width(sliderHeight.value.dp).rotate(270f),
+      valueRange = synthesizerViewModel.volumeRange
+    )
+  }
   Icon(imageVector = Icons.Filled.VolumeMute, contentDescription = null)
 }
 
@@ -196,4 +204,18 @@ private fun WavetableButton(
 @Composable
 fun WavetableSynthesizerPreview() {
   WavetableSynthesizerApp(Modifier, WavetableSynthesizerViewModel(LoggingWavetableSynthesizer()))
+}
+
+@Preview(showBackground = true, widthDp = 100, heightDp = 200)
+@Composable
+fun VolumeControlPreview() {
+  Column(
+    verticalArrangement = Arrangement.Top,
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = Modifier
+      .fillMaxWidth()
+      .fillMaxHeight()
+  ) {
+    VolumeControl(modifier = Modifier, synthesizerViewModel = WavetableSynthesizerViewModel(LoggingWavetableSynthesizer()))
+  }
 }
