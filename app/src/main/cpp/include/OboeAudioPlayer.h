@@ -6,19 +6,24 @@
 namespace wavetablesynthesizer {
 class AudioSource;
 
-    class OboeAudioPlayer : public oboe::AudioStreamDataCallback
-            , public AudioPlayer {
-public:
-    static constexpr auto channelCount = oboe::ChannelCount::Stereo;
+class OboeAudioPlayer : public oboe::AudioStreamDataCallback,
+                        public AudioPlayer {
+ public:
+  static constexpr auto channelCount = oboe::ChannelCount::Stereo;
 
-    OboeAudioPlayer(std::shared_ptr<AudioSource> source, int samplingRate);
-    int32_t play() override;
-    void stop() override;
-    oboe::DataCallbackResult onAudioReady(oboe::AudioStream* audioStream, void* audioData, int32_t framesCount) override;
+  OboeAudioPlayer(std::shared_ptr<AudioSource> source, int samplingRate);
 
-private:
-    std::shared_ptr<AudioSource> _source;
-    std::shared_ptr<oboe::AudioStream> _stream;
-    int _samplingRate;
+  int32_t play() override;
+
+  void stop() override;
+
+  oboe::DataCallbackResult onAudioReady(oboe::AudioStream* audioStream,
+                                        void* audioData,
+                                        int32_t framesCount) override;
+
+ private:
+  std::shared_ptr<AudioSource> _source;
+  std::shared_ptr<oboe::AudioStream> _stream;
+  int _samplingRate;
 };
-}
+}  // namespace wavetablesynthesizer
