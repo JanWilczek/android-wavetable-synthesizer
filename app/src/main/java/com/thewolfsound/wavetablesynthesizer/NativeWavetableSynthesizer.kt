@@ -1,10 +1,12 @@
 package com.thewolfsound.wavetablesynthesizer
 
+import android.util.Log
 import androidx.lifecycle.*
 
 class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserver {
 
   private var synthesizerHandle: Long = 0
+  private val synthesizerMutex = Object()
   private external fun create(): Long
   private external fun delete(synthesizerHandle: Long)
   private external fun play(synthesizerHandle: Long)
@@ -22,37 +24,68 @@ class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserve
   override fun onStart(owner: LifecycleOwner) {
     super.onStart(owner)
 
-    // create the synthesizer
-    synthesizerHandle = create()
+    synchronized(synthesizerMutex) {
+      Log.d("NativeWavetableSynthesizer", "onStart() called")
+      if (synthesizerHandle != 0L) {
+        Log.e("NativeWavetableSynthesizer", "Attempting to create a new synthesizer while the old one is still alive.")
+        delete(synthesizerHandle)
+      }
+
+      // create the synthesizer
+      synthesizerHandle = create()
+    }
   }
 
   override fun onStop(owner: LifecycleOwner) {
-    // Destroy the synthesizer
-    delete(synthesizerHandle)
-    synthesizerHandle = 0
+    super.onStop(owner)
+
+    synchronized(synthesizerMutex) {
+      Log.d("NativeWavetableSynthesizer", "onStop() called")
+
+      if (synthesizerHandle == 0L) {
+        Log.e("NativeWavetableSynthesizer", "Attempting to destroy a null synthesizer.")
+        return
+      }
+
+      // Destroy the synthesizer
+      delete(synthesizerHandle)
+      synthesizerHandle = 0L
+    }
   }
 
   override fun play() {
-    play(synthesizerHandle)
+    synchronized(synthesizerMutex) {
+      play(synthesizerHandle)
+    }
   }
 
   override fun stop() {
-    stop(synthesizerHandle)
+    synchronized(synthesizerMutex) {
+      stop(synthesizerHandle)
+    }
   }
 
   override fun isPlaying(): Boolean {
-    return isPlaying(synthesizerHandle)
+    synchronized(synthesizerMutex) {
+      return isPlaying(synthesizerHandle)
+    }
   }
 
   override fun setFrequency(frequencyInHz: Float) {
-    setFrequency(synthesizerHandle, frequencyInHz)
+    synchronized(synthesizerMutex) {
+      setFrequency(synthesizerHandle, frequencyInHz)
+    }
   }
 
   override fun setVolume(volumeInDb: Float) {
-    setVolume(synthesizerHandle, volumeInDb)
+    synchronized(synthesizerMutex) {
+      setVolume(synthesizerHandle, volumeInDb)
+    }
   }
 
   override fun setWavetable(wavetable: Wavetable) {
-    TODO("Not yet implemented")
+    synchronized(synthesizerMutex) {
+      TODO("Not yet implemented")
+    }
   }
 }
