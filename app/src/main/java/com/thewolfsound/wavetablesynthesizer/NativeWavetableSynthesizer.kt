@@ -29,6 +29,7 @@ class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserve
   override fun onStop(owner: LifecycleOwner) {
     // Destroy the synthesizer
     delete(synthesizerHandle)
+    synthesizerHandle = 0
   }
 
   override fun play() {
