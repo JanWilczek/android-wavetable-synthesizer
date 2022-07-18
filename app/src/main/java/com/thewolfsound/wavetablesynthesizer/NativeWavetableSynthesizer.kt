@@ -26,13 +26,7 @@ class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserve
 
     synchronized(synthesizerMutex) {
       Log.d("NativeWavetableSynthesizer", "onStart() called")
-      if (synthesizerHandle != 0L) {
-        Log.e("NativeWavetableSynthesizer", "Attempting to create a new synthesizer while the old one is still alive.")
-        delete(synthesizerHandle)
-      }
-
-      // create the synthesizer
-      synthesizerHandle = create()
+      createNativeHandleIfNotExists()
     }
   }
 
@@ -55,30 +49,35 @@ class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserve
 
   override fun play() {
     synchronized(synthesizerMutex) {
+      createNativeHandleIfNotExists()
       play(synthesizerHandle)
     }
   }
 
   override fun stop() {
     synchronized(synthesizerMutex) {
+      createNativeHandleIfNotExists()
       stop(synthesizerHandle)
     }
   }
 
   override fun isPlaying(): Boolean {
     synchronized(synthesizerMutex) {
+      createNativeHandleIfNotExists()
       return isPlaying(synthesizerHandle)
     }
   }
 
   override fun setFrequency(frequencyInHz: Float) {
     synchronized(synthesizerMutex) {
+      createNativeHandleIfNotExists()
       setFrequency(synthesizerHandle, frequencyInHz)
     }
   }
 
   override fun setVolume(volumeInDb: Float) {
     synchronized(synthesizerMutex) {
+      createNativeHandleIfNotExists()
       setVolume(synthesizerHandle, volumeInDb)
     }
   }
@@ -87,5 +86,14 @@ class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserve
     synchronized(synthesizerMutex) {
       TODO("Not yet implemented")
     }
+  }
+
+  private fun createNativeHandleIfNotExists() {
+    if (synthesizerHandle != 0L) {
+      return
+    }
+
+    // create the synthesizer
+    synthesizerHandle = create()
   }
 }

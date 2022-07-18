@@ -9,7 +9,7 @@ class WavetableSynthesizerViewModel(
   private val wavetableSynthesizer: WavetableSynthesizer
 ) : ViewModel() {
 
-  private val _frequency = MutableLiveData(100f)
+  private val _frequency = MutableLiveData(300f)
   val frequency: LiveData<Float>
     get() {
       return _frequency
@@ -53,7 +53,7 @@ class WavetableSynthesizerViewModel(
       return _playButtonLabel
     }
 
-  init {
+  fun applyParameters() {
     wavetableSynthesizer.setFrequency(frequency.value!!)
     wavetableSynthesizer.setVolume(volume.value!!)
 //    wavetableSynthesizer.setWavetable()

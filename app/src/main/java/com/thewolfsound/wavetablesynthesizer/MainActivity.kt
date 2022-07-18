@@ -49,6 +49,11 @@ class MainActivity : ComponentActivity() {
     super.onDestroy()
     lifecycle.removeObserver(synthesizer)
   }
+
+  override fun onResume() {
+    super.onResume()
+    synthesizerViewModel.applyParameters();
+  }
 }
 
 @Composable
@@ -136,14 +141,20 @@ private fun VolumeControl(modifier: Modifier, synthesizerViewModel: WavetableSyn
 
   Icon(imageVector = Icons.Filled.VolumeUp, contentDescription = null)
   Column(
-    modifier = modifier.fillMaxWidth().fillMaxHeight(0.8f).offset(y = 40.dp).onSizeChanged { sliderHeight.value = (0.3f * it.height.toFloat()).toInt() },
+    modifier = modifier
+      .fillMaxWidth()
+      .fillMaxHeight(0.8f)
+      .offset(y = 40.dp)
+      .onSizeChanged { sliderHeight.value = (0.3f * it.height.toFloat()).toInt() },
     horizontalAlignment = Alignment.CenterHorizontally
   )
   {
     Slider(
       value = volume.value ?: synthesizerViewModel.volumeRange.endInclusive,
       onValueChange = { synthesizerViewModel.setVolume(it) },
-      modifier = modifier.width(sliderHeight.value.dp).rotate(270f),
+      modifier = modifier
+        .width(sliderHeight.value.dp)
+        .rotate(270f),
       valueRange = synthesizerViewModel.volumeRange
     )
   }
