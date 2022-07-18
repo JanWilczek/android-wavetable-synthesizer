@@ -17,8 +17,8 @@ OboeAudioPlayer::OboeAudioPlayer(std::shared_ptr<AudioSource> source,
 }
 
 OboeAudioPlayer::~OboeAudioPlayer() {
-    LOGD("OboeAudioPlayer destroyed. Instances count: %d", --instances);
-    OboeAudioPlayer::stop();
+  LOGD("OboeAudioPlayer destroyed. Instances count: %d", --instances);
+  OboeAudioPlayer::stop();
 }
 
 int32_t OboeAudioPlayer::play() {
@@ -58,15 +58,14 @@ void OboeAudioPlayer::stop() {
 DataCallbackResult OboeAudioPlayer::onAudioReady(oboe::AudioStream* audioStream,
                                                  void* audioData,
                                                  int32_t framesCount) {
-    auto* floatData = reinterpret_cast<float*>(audioData);
+  auto* floatData = reinterpret_cast<float*>(audioData);
 
   for (auto frame = 0; frame < framesCount; ++frame) {
     const auto sample = _source->getSample();
     for (auto channel = 0; channel < channelCount; ++channel) {
-      floatData[frame * channelCount + channelCount] = sample;
+      floatData[frame * channelCount + channel] = sample;
     }
   }
-
   return oboe::DataCallbackResult::Continue;
 }
 }  // namespace wavetablesynthesizer
