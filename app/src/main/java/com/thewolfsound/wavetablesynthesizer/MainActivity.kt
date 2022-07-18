@@ -15,7 +15,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,14 +26,13 @@ import com.thewolfsound.wavetablesynthesizer.ui.theme.WavetableSynthesizerTheme
 class MainActivity : ComponentActivity() {
 
   private val synthesizer = NativeWavetableSynthesizer()
-  private val synthesizerViewModel: WavetableSynthesizerViewModel by viewModels {
-    WavetableSynthesizerViewModelFactory(synthesizer)
-  }
+  private val synthesizerViewModel: WavetableSynthesizerViewModel by viewModels()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
     lifecycle.addObserver(synthesizer)
+    synthesizerViewModel.wavetableSynthesizer = synthesizer
     setContent {
       WavetableSynthesizerTheme {
         // A surface container using the 'background' color from the theme
@@ -52,7 +50,7 @@ class MainActivity : ComponentActivity() {
 
   override fun onResume() {
     super.onResume()
-    synthesizerViewModel.applyParameters();
+    synthesizerViewModel.applyParameters()
   }
 }
 
@@ -221,7 +219,7 @@ private fun WavetableButton(
 @Preview(showBackground = true, device = Devices.AUTOMOTIVE_1024p, widthDp = 1024, heightDp = 720)
 @Composable
 fun WavetableSynthesizerPreview() {
-  WavetableSynthesizerApp(Modifier, WavetableSynthesizerViewModel(LoggingWavetableSynthesizer()))
+  WavetableSynthesizerApp(Modifier, WavetableSynthesizerViewModel())
 }
 
 @Preview(showBackground = true, widthDp = 100, heightDp = 200)
@@ -234,6 +232,6 @@ fun VolumeControlPreview() {
       .fillMaxWidth()
       .fillMaxHeight()
   ) {
-    VolumeControl(modifier = Modifier, synthesizerViewModel = WavetableSynthesizerViewModel(LoggingWavetableSynthesizer()))
+    VolumeControl(modifier = Modifier, synthesizerViewModel = WavetableSynthesizerViewModel())
   }
 }

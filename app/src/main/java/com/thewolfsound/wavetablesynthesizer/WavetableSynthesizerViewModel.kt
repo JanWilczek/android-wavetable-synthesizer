@@ -3,11 +3,15 @@ package com.thewolfsound.wavetablesynthesizer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 
-class WavetableSynthesizerViewModel(
-  private val wavetableSynthesizer: WavetableSynthesizer
-) : ViewModel() {
+
+class WavetableSynthesizerViewModel : ViewModel() {
+
+  var wavetableSynthesizer: WavetableSynthesizer? = null
+  set(value) {
+    field = value
+    applyParameters()
+  }
 
   private val _frequency = MutableLiveData(300f)
   val frequency: LiveData<Float>
@@ -25,24 +29,24 @@ class WavetableSynthesizerViewModel(
 
   fun setFrequency(frequencyInHz: Float) {
     _frequency.value = frequencyInHz
-    wavetableSynthesizer.setFrequency(frequencyInHz)
+    wavetableSynthesizer?.setFrequency(frequencyInHz)
   }
 
   fun setVolume(volumeInDb: Float) {
     _volume.value = volumeInDb
-    wavetableSynthesizer.setVolume(volumeInDb)
+    wavetableSynthesizer?.setVolume(volumeInDb)
   }
 
   fun setWavetable(wavetable: Wavetable) {
-    wavetableSynthesizer.setWavetable(wavetable)
+    wavetableSynthesizer?.setWavetable(wavetable)
   }
 
   fun playClicked() {
-    if (wavetableSynthesizer.isPlaying()) {
-      wavetableSynthesizer.stop()
+    if (wavetableSynthesizer?.isPlaying() == true) {
+      wavetableSynthesizer?.stop()
       _playButtonLabel.value = "Play"
     } else {
-      wavetableSynthesizer.play()
+      wavetableSynthesizer?.play()
       _playButtonLabel.value = "Stop"
     }
   }
@@ -54,17 +58,9 @@ class WavetableSynthesizerViewModel(
     }
 
   fun applyParameters() {
-    wavetableSynthesizer.setFrequency(frequency.value!!)
-    wavetableSynthesizer.setVolume(volume.value!!)
-//    wavetableSynthesizer.setWavetable()
+    wavetableSynthesizer?.setFrequency(frequency.value!!)
+    wavetableSynthesizer?.setVolume(volume.value!!)
+//    wavetableSynthesizer?.setWavetable()
   }
 }
 
-class WavetableSynthesizerViewModelFactory(
-  private val wavetableSynthesizer: WavetableSynthesizer
-) : ViewModelProvider.Factory {
-
-  override fun <T : ViewModel> create(modelClass: Class<T>): T {
-    return WavetableSynthesizerViewModel(wavetableSynthesizer) as T
-  }
-}
