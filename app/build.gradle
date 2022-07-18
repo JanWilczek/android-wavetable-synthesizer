@@ -4,6 +4,11 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+        storeFile file('C:\\Users\\admin\\AndroidStudioProjects\\WavetableSynthesizer\\keystores\\WavetableSynthesizer.jks')
+        }
+    }
     compileSdk 31
 
     defaultConfig {

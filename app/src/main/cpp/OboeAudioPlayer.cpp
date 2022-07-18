@@ -2,15 +2,27 @@
 
 #include <utility>
 #include "AudioSource.h"
+#include "Log.h"
 
 using namespace oboe;
 
 namespace wavetablesynthesizer {
+
+static std::atomic<int> instances{0};
+
 OboeAudioPlayer::OboeAudioPlayer(std::shared_ptr<AudioSource> source,
                                  int samplingRate)
-    : _source(std::move(source)), _samplingRate(samplingRate) {}
+    : _source(std::move(source)), _samplingRate(samplingRate) {
+  LOGD("OboeAudioPlayer created. Instances count: %d", ++instances);
+}
+
+OboeAudioPlayer::~OboeAudioPlayer() {
+    LOGD("OboeAudioPlayer destroyed. Instances count: %d", --instances);
+    OboeAudioPlayer::stop();
+}
 
 int32_t OboeAudioPlayer::play() {
+  LOGD("OboeAudioPlayer::play()");
   AudioStreamBuilder builder;
   const auto result =
       builder.setPerformanceMode(PerformanceMode::LowLatency)
@@ -33,6 +45,8 @@ int32_t OboeAudioPlayer::play() {
 }
 
 void OboeAudioPlayer::stop() {
+  LOGD("OboeAudioPlayer::stop()");
+
   if (_stream) {
     _stream->stop();
     _stream->close();
@@ -44,7 +58,7 @@ void OboeAudioPlayer::stop() {
 DataCallbackResult OboeAudioPlayer::onAudioReady(oboe::AudioStream* audioStream,
                                                  void* audioData,
                                                  int32_t framesCount) {
-  auto* floatData = reinterpret_cast<float*>(audioData);
+    auto* floatData = reinterpret_cast<float*>(audioData);
 
   for (auto frame = 0; frame < framesCount; ++frame) {
     const auto sample = _source->getSample();

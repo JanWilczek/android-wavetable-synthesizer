@@ -26,13 +26,15 @@ import com.thewolfsound.wavetablesynthesizer.ui.theme.WavetableSynthesizerTheme
 
 class MainActivity : ComponentActivity() {
 
+  private val synthesizer = NativeWavetableSynthesizer()
   private val synthesizerViewModel: WavetableSynthesizerViewModel by viewModels {
-    WavetableSynthesizerViewModelFactory(NativeWavetableSynthesizer())
+    WavetableSynthesizerViewModelFactory(synthesizer)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+    lifecycle.addObserver(synthesizer)
     setContent {
       WavetableSynthesizerTheme {
         // A surface container using the 'background' color from the theme
@@ -41,6 +43,11 @@ class MainActivity : ComponentActivity() {
         }
       }
     }
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    lifecycle.removeObserver(synthesizer)
   }
 }
 

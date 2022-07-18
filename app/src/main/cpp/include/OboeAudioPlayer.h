@@ -9,9 +9,10 @@ class AudioSource;
 class OboeAudioPlayer : public oboe::AudioStreamDataCallback,
                         public AudioPlayer {
  public:
-  static constexpr auto channelCount = oboe::ChannelCount::Stereo;
+  static constexpr auto channelCount = oboe::ChannelCount::Mono;
 
   OboeAudioPlayer(std::shared_ptr<AudioSource> source, int samplingRate);
+  ~OboeAudioPlayer();
 
   int32_t play() override;
 

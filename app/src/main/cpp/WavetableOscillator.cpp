@@ -39,9 +39,7 @@ void WavetableOscillator::onPlaybackStopped() {
 float WavetableOscillator::interpolateLinearly() const {
   const auto truncatedIndex =
       static_cast<typename decltype(waveTable)::size_type>(index);
-  const auto nextIndex =
-      static_cast<typename decltype(waveTable)::size_type>(std::ceil(index)) %
-      waveTable.size();
+  const auto nextIndex = (truncatedIndex + 1u) % waveTable.size();
   const auto nextIndexWeight = index - static_cast<float>(truncatedIndex);
   return waveTable[nextIndex] * nextIndexWeight +
          (1.f - nextIndexWeight) * waveTable[truncatedIndex];

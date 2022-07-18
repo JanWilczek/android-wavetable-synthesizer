@@ -1,6 +1,8 @@
 package com.thewolfsound.wavetablesynthesizer
 
-class NativeWavetableSynthesizer : WavetableSynthesizer {
+import androidx.lifecycle.*
+
+class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserver {
 
   private var synthesizerHandle: Long = 0
   private external fun create(): Long
@@ -17,12 +19,14 @@ class NativeWavetableSynthesizer : WavetableSynthesizer {
     }
   }
 
-  init {
-    // Create the synthesizer
+  override fun onStart(owner: LifecycleOwner) {
+    super.onStart(owner)
+
+    // create the synthesizer
     synthesizerHandle = create()
   }
 
-  protected fun finalize() {
+  override fun onStop(owner: LifecycleOwner) {
     // Destroy the synthesizer
     delete(synthesizerHandle)
   }
