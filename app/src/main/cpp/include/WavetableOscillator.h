@@ -32,5 +32,6 @@ class WavetableOscillator : public AudioSource {
   std::atomic<bool> swapWavetable{false};
   std::vector<float> wavetableToSwap;
   std::atomic<bool> isPlaying{false};
+  std::atomic<bool> wavetableIsBeingSwapped{false};
 };
 }  // namespace wavetablesynthesizer

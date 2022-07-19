@@ -8,12 +8,12 @@ WavetableOscillator::WavetableOscillator(std::vector<float> waveTable,
     : waveTable{std::move(waveTable)}, sampleRate{sampleRate} {}
 
 float WavetableOscillator::getSample() {
-  isPlaying.store(true);
-
-    if (swapWavetable.load()) {
+  wavetableIsBeingSwapped.store(true);
+  if (swapWavetable.load()) {
     std::swap(waveTable, wavetableToSwap);
     swapWavetable.store(false);
   }
+  wavetableIsBeingSwapped.store(false);
 
   index = std::fmod(index, static_cast<float>(waveTable.size()));
   const auto sample = interpolateLinearly();
@@ -28,7 +28,6 @@ void WavetableOscillator::setFrequency(float frequency) {
 
 void WavetableOscillator::onPlaybackStopped() {
   index = 0.f;
-  isPlaying.store(false);
 }
 
 float WavetableOscillator::interpolateLinearly() const {
@@ -45,11 +44,12 @@ void WavetableOscillator::setAmplitude(float newAmplitude) {
 }
 
 void WavetableOscillator::setWavetable(const std::vector<float>& wavetable) {
-  // Wait for the previous swap to take place
-  while (isPlaying.load() && swapWavetable.load()) {
+  // Wait for the previous swap to take place if the oscillator is playing
+  auto swapWavetableState = swapWavetable.load();
+  while (!swapWavetable.compare_exchange_weak(swapWavetableState, false)) {
   }
-  auto isBeingSwapped = swapWavetable.load();
-  while (!swapWavetable.compare_exchange_weak(isBeingSwapped, false));
+  while (wavetableIsBeingSwapped.load()) {
+  }
   wavetableToSwap = wavetable;
   swapWavetable.store(true);
 }
