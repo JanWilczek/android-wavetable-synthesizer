@@ -44,11 +44,10 @@ class WavetableSynthesizerViewModel : ViewModel() {
   fun playClicked() {
     if (wavetableSynthesizer?.isPlaying() == true) {
       wavetableSynthesizer?.stop()
-      _playButtonLabel.value = "Play"
     } else {
       wavetableSynthesizer?.play()
-      _playButtonLabel.value = "Stop"
     }
+    updatePlayButtonLabel()
   }
 
   private val _playButtonLabel = MutableLiveData("Play")
@@ -61,6 +60,15 @@ class WavetableSynthesizerViewModel : ViewModel() {
     wavetableSynthesizer?.setFrequency(frequency.value!!)
     wavetableSynthesizer?.setVolume(volume.value!!)
 //    wavetableSynthesizer?.setWavetable()
+    updatePlayButtonLabel()
+  }
+
+  private fun updatePlayButtonLabel() {
+    if (wavetableSynthesizer?.isPlaying() == true) {
+      _playButtonLabel.value = "Stop"
+    } else {
+      _playButtonLabel.value = "Play"
+    }
   }
 }
 
