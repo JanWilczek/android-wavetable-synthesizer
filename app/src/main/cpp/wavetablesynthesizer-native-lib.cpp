@@ -130,4 +130,24 @@ Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_setVolume(
         "calling create().");
   }
 }
+
+JNIEXPORT void JNICALL
+Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_setWavetable(
+        JNIEnv* env,
+        jobject obj,
+        jlong synthesizerHandle,
+        jint wavetable) {
+    auto* synthesizer =
+            reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer*>(
+                    synthesizerHandle);
+    const auto nativeWavetable = static_cast<wavetablesynthesizer::Wavetable>(wavetable);
+
+    if (synthesizer) {
+        synthesizer->setWavetable(nativeWavetable);
+    } else {
+        LOGD(
+                "Synthesizer not created. Please, create the synthesizer first by "
+                "calling create().");
+    }
+}
 }

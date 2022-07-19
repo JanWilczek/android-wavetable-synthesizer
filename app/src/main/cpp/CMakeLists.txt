@@ -25,6 +25,7 @@ add_library( # Sets the name of the library.
              wavetablesynthesizer-native-lib.cpp
              WavetableSynthesizer.cpp
              WavetableOscillator.cpp
+             WavetableFactory.cpp
              OboeAudioPlayer.cpp
         )
 

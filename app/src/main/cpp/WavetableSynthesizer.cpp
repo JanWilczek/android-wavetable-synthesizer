@@ -10,8 +10,7 @@ float dBToAmplitude(float dB) {
 }
 
 WavetableSynthesizer::WavetableSynthesizer()
-    : _oscillator{std::make_shared<WavetableOscillator>(generateSineWaveTable(),
-                                                        samplingRate)},
+    : _oscillator{std::make_shared<WavetableOscillator>(_wavetableFactory.getWaveTable(_currentWavetable), samplingRate)},
       _audioPlayer{
           std::make_unique<OboeAudioPlayer>(_oscillator, samplingRate)} {}
 
@@ -44,7 +43,12 @@ void WavetableSynthesizer::setVolume(float volumeInDb) {
   _oscillator->setAmplitude(amplitude);
 }
 
-void WavetableSynthesizer::setWavetable(Wavetable wavetable) {}
+void WavetableSynthesizer::setWavetable(Wavetable wavetable) {
+    if (_currentWavetable != wavetable) {
+        _currentWavetable = wavetable;
+        _oscillator->setWavetable(_wavetableFactory.getWaveTable(wavetable));
+    }
+}
 
 void WavetableSynthesizer::stop() {
   LOGD("stop() called");

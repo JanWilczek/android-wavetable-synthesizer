@@ -18,6 +18,8 @@ class WavetableOscillator : public AudioSource {
 
   void onPlaybackStopped() override;
 
+  void setWavetable(const std::vector<float>& wavetable);
+
  private:
   float interpolateLinearly() const;
 
@@ -26,5 +28,9 @@ class WavetableOscillator : public AudioSource {
   std::vector<float> waveTable;
   float sampleRate;
   std::atomic<float> amplitude{1.f};
+
+  std::atomic<bool> swapWavetable{false};
+  std::vector<float> wavetableToSwap;
+  std::atomic<bool> isPlaying{false};
 };
 }  // namespace wavetablesynthesizer

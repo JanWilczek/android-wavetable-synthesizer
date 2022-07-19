@@ -14,6 +14,7 @@ class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserve
   private external fun isPlaying(synthesizerHandle: Long): Boolean
   private external fun setFrequency(synthesizerHandle: Long, frequencyInHz: Float)
   private external fun setVolume(synthesizerHandle: Long, amplitudeInDb: Float)
+  private external fun setWavetable(synthesizerHandle: Long, wavetable: Int)
 
   companion object {
     init {
@@ -84,7 +85,8 @@ class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserve
 
   override fun setWavetable(wavetable: Wavetable) {
     synchronized(synthesizerMutex) {
-      TODO("Not yet implemented")
+      createNativeHandleIfNotExists()
+      setWavetable(synthesizerHandle, wavetable.ordinal);
     }
   }
 

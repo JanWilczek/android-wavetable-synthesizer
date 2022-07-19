@@ -2,6 +2,8 @@
 
 #include <memory>
 #include <mutex>
+#include "Wavetable.h"
+#include "WavetableFactory.h"
 
 namespace wavetablesynthesizer {
 class WavetableOscillator;
@@ -9,8 +11,6 @@ class WavetableOscillator;
 class AudioPlayer;
 
 constexpr auto samplingRate = 48000;
-
-enum class Wavetable { SINE, TRIANGLE, SQUARE, SAW };
 
 class WavetableSynthesizer {
  public:
@@ -33,6 +33,8 @@ class WavetableSynthesizer {
  private:
   bool _isPlaying = false;
   std::mutex _mutex;
+  WavetableFactory _wavetableFactory;
+  Wavetable _currentWavetable{Wavetable::SINE};
   std::shared_ptr<WavetableOscillator> _oscillator;
   std::unique_ptr<AudioPlayer> _audioPlayer;
 };

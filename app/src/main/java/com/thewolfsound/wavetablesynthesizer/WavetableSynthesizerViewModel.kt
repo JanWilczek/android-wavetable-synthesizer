@@ -3,6 +3,9 @@ package com.thewolfsound.wavetablesynthesizer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class WavetableSynthesizerViewModel : ViewModel() {
@@ -27,6 +30,8 @@ class WavetableSynthesizerViewModel : ViewModel() {
     }
   val volumeRange = (-60f)..0f
 
+  private var wavetable = Wavetable.SINE
+
   fun setFrequency(frequencyInHz: Float) {
     _frequency.value = frequencyInHz
     wavetableSynthesizer?.setFrequency(frequencyInHz)
@@ -37,8 +42,11 @@ class WavetableSynthesizerViewModel : ViewModel() {
     wavetableSynthesizer?.setVolume(volumeInDb)
   }
 
-  fun setWavetable(wavetable: Wavetable) {
-    wavetableSynthesizer?.setWavetable(wavetable)
+  fun setWavetable(newWavetable: Wavetable) {
+    wavetable = newWavetable
+    viewModelScope.launch(Dispatchers.Default) {
+      wavetableSynthesizer?.setWavetable(newWavetable)
+    }
   }
 
   fun playClicked() {
@@ -59,7 +67,7 @@ class WavetableSynthesizerViewModel : ViewModel() {
   fun applyParameters() {
     wavetableSynthesizer?.setFrequency(frequency.value!!)
     wavetableSynthesizer?.setVolume(volume.value!!)
-//    wavetableSynthesizer?.setWavetable()
+    wavetableSynthesizer?.setWavetable(wavetable)
     updatePlayButtonLabel()
   }
 

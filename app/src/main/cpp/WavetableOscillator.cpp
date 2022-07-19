@@ -3,24 +3,18 @@
 
 namespace wavetablesynthesizer {
 
-std::vector<float> generateSineWaveTable() {
-  constexpr auto WAVETABLE_LENGTH = 256;
-  const auto PI = std::atanf(1.f) * 4;
-  std::vector<float> sineWaveTable = std::vector<float>(WAVETABLE_LENGTH);
-
-  for (auto i = 0; i < WAVETABLE_LENGTH; ++i) {
-    sineWaveTable[i] =
-        std::sinf(2 * PI * static_cast<float>(i) / WAVETABLE_LENGTH);
-  }
-
-  return sineWaveTable;
-}
-
 WavetableOscillator::WavetableOscillator(std::vector<float> waveTable,
                                          float sampleRate)
     : waveTable{std::move(waveTable)}, sampleRate{sampleRate} {}
 
 float WavetableOscillator::getSample() {
+  isPlaying.store(true);
+
+    if (swapWavetable.load()) {
+    std::swap(waveTable, wavetableToSwap);
+    swapWavetable.store(false);
+  }
+
   index = std::fmod(index, static_cast<float>(waveTable.size()));
   const auto sample = interpolateLinearly();
   index += indexIncrement;
@@ -34,6 +28,7 @@ void WavetableOscillator::setFrequency(float frequency) {
 
 void WavetableOscillator::onPlaybackStopped() {
   index = 0.f;
+  isPlaying.store(false);
 }
 
 float WavetableOscillator::interpolateLinearly() const {
@@ -47,5 +42,15 @@ float WavetableOscillator::interpolateLinearly() const {
 
 void WavetableOscillator::setAmplitude(float newAmplitude) {
   amplitude.store(newAmplitude);
+}
+
+void WavetableOscillator::setWavetable(const std::vector<float>& wavetable) {
+  // Wait for the previous swap to take place
+  while (isPlaying.load() && swapWavetable.load()) {
+  }
+  auto isBeingSwapped = swapWavetable.load();
+  while (!swapWavetable.compare_exchange_weak(isBeingSwapped, false));
+  wavetableToSwap = wavetable;
+  swapWavetable.store(true);
 }
 }  // namespace wavetablesynthesizer
