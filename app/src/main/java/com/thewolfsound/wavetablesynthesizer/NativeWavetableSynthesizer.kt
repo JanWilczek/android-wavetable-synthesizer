@@ -21,20 +21,20 @@ class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserve
     }
   }
 
-  override fun onStart(owner: LifecycleOwner) {
-    super.onStart(owner)
+  override fun onResume(owner: LifecycleOwner) {
+    super.onResume(owner)
 
     synchronized(synthesizerMutex) {
-      Log.d("NativeWavetableSynthesizer", "onStart() called")
+      Log.d("NativeWavetableSynthesizer", "onResume() called")
       createNativeHandleIfNotExists()
     }
   }
 
-  override fun onStop(owner: LifecycleOwner) {
-    super.onStop(owner)
+  override fun onPause(owner: LifecycleOwner) {
+    super.onPause(owner)
 
     synchronized(synthesizerMutex) {
-      Log.d("NativeWavetableSynthesizer", "onStop() called")
+      Log.d("NativeWavetableSynthesizer", "onPause() called")
 
       if (synthesizerHandle == 0L) {
         Log.e("NativeWavetableSynthesizer", "Attempting to destroy a null synthesizer.")
