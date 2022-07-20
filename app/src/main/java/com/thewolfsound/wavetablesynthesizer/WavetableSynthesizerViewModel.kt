@@ -20,7 +20,7 @@ class WavetableSynthesizerViewModel : ViewModel() {
     get() {
       return _frequency
     }
-  val frequencyRange = 60f..6000f
+  val frequencyRange = 30f..6000f
 
   private val _volume = MutableLiveData(-12f)
   val volume: LiveData<Float>
@@ -31,7 +31,11 @@ class WavetableSynthesizerViewModel : ViewModel() {
 
   private var wavetable = Wavetable.SINE
 
-  fun setFrequency(frequencyInHz: Float) {
+  /**
+   * @param frequencySliderPosition slider position in [0, 1] range
+   */
+  fun setFrequencySlierPosition(frequencySliderPosition: Float) {
+    val frequencyInHz = frequencyRange.start + (frequencyRange.endInclusive - frequencyRange.start) * frequencySliderPosition
     _frequency.value = frequencyInHz
     viewModelScope.launch {
       wavetableSynthesizer?.setFrequency(frequencyInHz)

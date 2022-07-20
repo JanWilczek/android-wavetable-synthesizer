@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.VolumeMute
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -119,10 +120,13 @@ private fun PitchControl(
   synthesizerViewModel: WavetableSynthesizerViewModel
 ) {
   val frequency = synthesizerViewModel.frequency.observeAsState()
+  val sliderPosition = rememberSaveable { mutableStateOf(0.1F) }
+
   Text("Frequency")
-  Slider(value = frequency.value ?: synthesizerViewModel.frequencyRange.start, onValueChange = {
-    synthesizerViewModel.setFrequency(it)
-  }, valueRange = synthesizerViewModel.frequencyRange)
+  Slider(value = sliderPosition.value, onValueChange = {
+    sliderPosition.value = it
+    synthesizerViewModel.setFrequencySlierPosition(it)
+  }, valueRange = 0F..1F)
   Row(
     horizontalArrangement = Arrangement.Center
   ) {
