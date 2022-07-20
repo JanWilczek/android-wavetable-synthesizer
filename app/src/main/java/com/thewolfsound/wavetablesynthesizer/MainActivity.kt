@@ -120,7 +120,7 @@ private fun PitchControl(
   synthesizerViewModel: WavetableSynthesizerViewModel
 ) {
   val frequency = synthesizerViewModel.frequency.observeAsState()
-  val sliderPosition = rememberSaveable { mutableStateOf(0.1F) }
+  val sliderPosition = rememberSaveable { mutableStateOf(synthesizerViewModel.sliderPositionFromFrequencyInHz(frequency.value ?: 300F)) }
 
   Text("Frequency")
   Slider(value = sliderPosition.value, onValueChange = {

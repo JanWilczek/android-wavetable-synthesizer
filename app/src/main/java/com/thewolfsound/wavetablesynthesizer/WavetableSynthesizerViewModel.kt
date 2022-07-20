@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kotlin.math.exp
 import kotlin.math.ln
-import kotlin.math.log
 
 
 class WavetableSynthesizerViewModel : ViewModel() {
@@ -38,8 +37,7 @@ class WavetableSynthesizerViewModel : ViewModel() {
    * @param frequencySliderPosition slider position in [0, 1] range
    */
   fun setFrequencySlierPosition(frequencySliderPosition: Float) {
-    val rangePosition = if (frequencySliderPosition == 0F) 0F else exp(ln(0.001F) - ln(0.001F) * frequencySliderPosition)
-    val frequencyInHz = frequencyRange.start + (frequencyRange.endInclusive - frequencyRange.start) * rangePosition
+    val frequencyInHz = frequencyInHzFromSliderPosition(frequencySliderPosition)
     _frequency.value = frequencyInHz
     viewModelScope.launch {
       wavetableSynthesizer?.setFrequency(frequencyInHz)
@@ -69,6 +67,16 @@ class WavetableSynthesizerViewModel : ViewModel() {
       }
       updatePlayButtonLabel()
     }
+  }
+
+  fun frequencyInHzFromSliderPosition(sliderPosition: Float): Float {
+    val rangePosition = if (sliderPosition == 0F) 0F else exp(ln(0.001F) - ln(0.001F) * sliderPosition)
+    return frequencyRange.start + (frequencyRange.endInclusive - frequencyRange.start) * rangePosition
+  }
+
+  fun sliderPositionFromFrequencyInHz(frequencyInHz: Float): Float {
+    val rangePosition = (frequencyInHz - frequencyRange.start) / (frequencyRange.endInclusive - frequencyRange.start)
+    return (ln(rangePosition) - ln(0.001F)) / (-ln(0.001F))
   }
 
   private val _playButtonLabel = MutableLiveData("Play")
