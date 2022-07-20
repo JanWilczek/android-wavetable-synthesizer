@@ -5,6 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import kotlin.math.exp
+import kotlin.math.ln
+import kotlin.math.log
 
 
 class WavetableSynthesizerViewModel : ViewModel() {
@@ -20,9 +23,9 @@ class WavetableSynthesizerViewModel : ViewModel() {
     get() {
       return _frequency
     }
-  val frequencyRange = 30f..6000f
+  val frequencyRange = 40f..3000f
 
-  private val _volume = MutableLiveData(-12f)
+  private val _volume = MutableLiveData(-24f)
   val volume: LiveData<Float>
     get() {
       return _volume
@@ -35,7 +38,8 @@ class WavetableSynthesizerViewModel : ViewModel() {
    * @param frequencySliderPosition slider position in [0, 1] range
    */
   fun setFrequencySlierPosition(frequencySliderPosition: Float) {
-    val frequencyInHz = frequencyRange.start + (frequencyRange.endInclusive - frequencyRange.start) * frequencySliderPosition
+    val rangePosition = if (frequencySliderPosition == 0F) 0F else exp(ln(0.001F) - ln(0.001F) * frequencySliderPosition)
+    val frequencyInHz = frequencyRange.start + (frequencyRange.endInclusive - frequencyRange.start) * rangePosition
     _frequency.value = frequencyInHz
     viewModelScope.launch {
       wavetableSynthesizer?.setFrequency(frequencyInHz)
