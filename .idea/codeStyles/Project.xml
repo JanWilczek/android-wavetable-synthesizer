@@ -453,6 +453,7 @@
       </arrangement>
     </codeStyleSettings>
     <codeStyleSettings language="ObjectiveC">
+      <option name="RIGHT_MARGIN" value="80" />
       <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
       <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
       <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="1" />

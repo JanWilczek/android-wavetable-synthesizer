@@ -23,16 +23,34 @@ std::vector<float> generateTriangleWaveTable() {
 
   constexpr auto HARMONICS_COUNT = 13;
 
-  for (auto k = 0; k < HARMONICS_COUNT; ++k) {
+  for (auto k = 1; k <= HARMONICS_COUNT; ++k) {
     for (auto j = 0; j < WAVETABLE_LENGTH; ++j) {
+      const auto phase = 2.f * PI * 1.f * j / WAVETABLE_LENGTH;
       triangleWaveTable[j] +=
           8.f / std::pow(PI, 2.f) * std::pow(-1.f, k) *
           std::pow(2 * k - 1, -2.f) *
-          std::sin((2.f * k - 1.f) * 2.f * PI * 1.f * j / WAVETABLE_LENGTH);
+          std::sin((2.f * k - 1.f) * phase);
     }
   }
 
   return triangleWaveTable;
+}
+
+std::vector<float> generateSquareWaveTable() {
+  auto squareWaveTable = std::vector<float>(WAVETABLE_LENGTH, 0.f);
+
+  constexpr auto HARMONICS_COUNT = 7;
+
+  for (auto k = 1; k <= HARMONICS_COUNT; ++k) {
+    for (auto j = 0; j < WAVETABLE_LENGTH; ++j) {
+      const auto phase = 2.f * PI * 1.f * j / WAVETABLE_LENGTH;
+      squareWaveTable[j] +=
+          4.f / PI * std::pow(2.f * k - 1.f, -1.f) *
+              std::sin((2.f * k - 1.f) * phase);
+    }
+  }
+
+  return squareWaveTable;
 }
 
 std::vector<float> WavetableFactory::getWaveTable(
@@ -42,6 +60,8 @@ std::vector<float> WavetableFactory::getWaveTable(
       return generateSineWaveTable();
     case Wavetable::TRIANGLE:
       return generateTriangleWaveTable();
+    case Wavetable::SQUARE:
+      return generateSquareWaveTable();
     default:
       return {WAVETABLE_LENGTH, 0.f};
   }
