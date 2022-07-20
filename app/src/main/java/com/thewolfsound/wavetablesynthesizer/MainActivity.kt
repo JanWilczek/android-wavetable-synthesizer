@@ -15,7 +15,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,7 +35,6 @@ class MainActivity : ComponentActivity() {
     synthesizerViewModel.wavetableSynthesizer = synthesizer
     setContent {
       WavetableSynthesizerTheme {
-        // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
           WavetableSynthesizerApp(Modifier, synthesizerViewModel)
         }
@@ -135,23 +134,26 @@ private fun PitchControl(
 @Composable
 private fun VolumeControl(modifier: Modifier, synthesizerViewModel: WavetableSynthesizerViewModel) {
   val volume = synthesizerViewModel.volume.observeAsState()
-  val sliderHeight = remember { mutableStateOf(0) }
+  // The volume slider should take around 1/4 of the screen height
+  val screenHeight = LocalConfiguration.current.screenHeightDp
+  val sliderHeight = screenHeight / 4
+
 
   Icon(imageVector = Icons.Filled.VolumeUp, contentDescription = null)
   Column(
     modifier = modifier
       .fillMaxWidth()
       .fillMaxHeight(0.8f)
-      .offset(y = 40.dp)
-      .onSizeChanged { sliderHeight.value = (0.3f * it.height.toFloat()).toInt() },
-    horizontalAlignment = Alignment.CenterHorizontally
+      .offset(y = 40.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.SpaceBetween
   )
   {
     Slider(
       value = volume.value ?: synthesizerViewModel.volumeRange.endInclusive,
       onValueChange = { synthesizerViewModel.setVolume(it) },
       modifier = modifier
-        .width(sliderHeight.value.dp)
+        .width(sliderHeight.dp)
         .rotate(270f),
       valueRange = synthesizerViewModel.volumeRange
     )
