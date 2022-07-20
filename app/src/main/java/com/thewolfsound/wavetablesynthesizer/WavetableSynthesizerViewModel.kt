@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
@@ -34,28 +33,34 @@ class WavetableSynthesizerViewModel : ViewModel() {
 
   fun setFrequency(frequencyInHz: Float) {
     _frequency.value = frequencyInHz
-    wavetableSynthesizer?.setFrequency(frequencyInHz)
+    viewModelScope.launch {
+      wavetableSynthesizer?.setFrequency(frequencyInHz)
+    }
   }
 
   fun setVolume(volumeInDb: Float) {
     _volume.value = volumeInDb
-    wavetableSynthesizer?.setVolume(volumeInDb)
+    viewModelScope.launch {
+      wavetableSynthesizer?.setVolume(volumeInDb)
+    }
   }
 
   fun setWavetable(newWavetable: Wavetable) {
     wavetable = newWavetable
-    viewModelScope.launch(Dispatchers.Default) {
+    viewModelScope.launch {
       wavetableSynthesizer?.setWavetable(newWavetable)
     }
   }
 
   fun playClicked() {
-    if (wavetableSynthesizer?.isPlaying() == true) {
-      wavetableSynthesizer?.stop()
-    } else {
-      wavetableSynthesizer?.play()
+    viewModelScope.launch {
+      if (wavetableSynthesizer?.isPlaying() == true) {
+        wavetableSynthesizer?.stop()
+      } else {
+        wavetableSynthesizer?.play()
+      }
+      updatePlayButtonLabel()
     }
-    updatePlayButtonLabel()
   }
 
   private val _playButtonLabel = MutableLiveData("Play")
@@ -65,10 +70,12 @@ class WavetableSynthesizerViewModel : ViewModel() {
     }
 
   fun applyParameters() {
-    wavetableSynthesizer?.setFrequency(frequency.value!!)
-    wavetableSynthesizer?.setVolume(volume.value!!)
-    wavetableSynthesizer?.setWavetable(wavetable)
-    updatePlayButtonLabel()
+    viewModelScope.launch {
+      wavetableSynthesizer?.setFrequency(frequency.value!!)
+      wavetableSynthesizer?.setVolume(volume.value!!)
+      wavetableSynthesizer?.setWavetable(wavetable)
+      updatePlayButtonLabel()
+    }
   }
 
   private fun updatePlayButtonLabel() {
