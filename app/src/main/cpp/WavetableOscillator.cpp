@@ -8,17 +8,21 @@ WavetableOscillator::WavetableOscillator(std::vector<float> waveTable,
     : waveTable{std::move(waveTable)}, sampleRate{sampleRate} {}
 
 float WavetableOscillator::getSample() {
+  swapWavetableIfNecessary();
+
+  index = std::fmod(index, static_cast<float>(waveTable.size()));
+  const auto sample = interpolateLinearly();
+  index += indexIncrement;
+  return amplitude * sample;
+}
+
+void WavetableOscillator::swapWavetableIfNecessary() {
   wavetableIsBeingSwapped.store(true, std::memory_order_release);
   if (swapWavetable.load(std::memory_order_acquire)) {
     std::swap(waveTable, wavetableToSwap);
     swapWavetable.store(false, std::memory_order_relaxed);
   }
   wavetableIsBeingSwapped.store(false, std::memory_order_release);
-
-  index = std::fmod(index, static_cast<float>(waveTable.size()));
-  const auto sample = interpolateLinearly();
-  index += indexIncrement;
-  return amplitude * sample;
 }
 
 void WavetableOscillator::setFrequency(float frequency) {

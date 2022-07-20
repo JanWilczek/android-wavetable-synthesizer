@@ -4,7 +4,6 @@
 #include "AudioSource.h"
 
 namespace wavetablesynthesizer {
-std::vector<float> generateSineWaveTable();
 
 class WavetableOscillator : public AudioSource {
  public:
@@ -22,6 +21,7 @@ class WavetableOscillator : public AudioSource {
 
  private:
   float interpolateLinearly() const;
+  void swapWavetableIfNecessary();
 
   float index = 0.f;
   std::atomic<float> indexIncrement{0.f};
@@ -31,7 +31,6 @@ class WavetableOscillator : public AudioSource {
 
   std::atomic<bool> swapWavetable{false};
   std::vector<float> wavetableToSwap;
-  std::atomic<bool> isPlaying{false};
   std::atomic<bool> wavetableIsBeingSwapped{false};
 };
 }  // namespace wavetablesynthesizer
