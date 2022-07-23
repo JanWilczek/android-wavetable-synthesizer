@@ -95,10 +95,12 @@ class WavetableSynthesizerViewModel : ViewModel() {
   }
 
   private fun updatePlayButtonLabel() {
-    if (wavetableSynthesizer?.isPlaying() == true) {
-      _playButtonLabel.value = "Stop"
-    } else {
-      _playButtonLabel.value = "Play"
+    viewModelScope.launch {
+      if (wavetableSynthesizer?.isPlaying() == true) {
+        _playButtonLabel.value = "Stop"
+      } else {
+        _playButtonLabel.value = "Play"
+      }
     }
   }
 }

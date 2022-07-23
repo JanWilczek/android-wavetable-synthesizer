@@ -5,10 +5,10 @@ enum class Wavetable {
 }
 
 interface WavetableSynthesizer {
-  fun play()
-  fun stop()
-  fun isPlaying() : Boolean
-  fun setFrequency(frequencyInHz: Float)
-  fun setVolume(volumeInDb: Float)
-  fun setWavetable(wavetable: Wavetable)
+  suspend fun play()
+  suspend fun stop()
+  suspend fun isPlaying() : Boolean
+  suspend fun setFrequency(frequencyInHz: Float)
+  suspend fun setVolume(volumeInDb: Float)
+  suspend fun setWavetable(wavetable: Wavetable)
 }

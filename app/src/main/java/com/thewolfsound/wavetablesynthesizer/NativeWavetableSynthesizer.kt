@@ -2,6 +2,8 @@ package com.thewolfsound.wavetablesynthesizer
 
 import android.util.Log
 import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserver {
 
@@ -48,45 +50,45 @@ class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserve
     }
   }
 
-  override fun play() {
+  override suspend fun play() = withContext(Dispatchers.Default) {
     synchronized(synthesizerMutex) {
       createNativeHandleIfNotExists()
       play(synthesizerHandle)
     }
   }
 
-  override fun stop() {
+  override suspend fun stop() = withContext(Dispatchers.Default) {
     synchronized(synthesizerMutex) {
       createNativeHandleIfNotExists()
       stop(synthesizerHandle)
     }
   }
 
-  override fun isPlaying(): Boolean {
+  override suspend fun isPlaying(): Boolean = withContext(Dispatchers.Default) {
     synchronized(synthesizerMutex) {
       createNativeHandleIfNotExists()
-      return isPlaying(synthesizerHandle)
+      return@withContext isPlaying(synthesizerHandle)
     }
   }
 
-  override fun setFrequency(frequencyInHz: Float) {
+  override suspend fun setFrequency(frequencyInHz: Float) = withContext(Dispatchers.Default) {
     synchronized(synthesizerMutex) {
       createNativeHandleIfNotExists()
       setFrequency(synthesizerHandle, frequencyInHz)
     }
   }
 
-  override fun setVolume(volumeInDb: Float) {
+  override suspend fun setVolume(volumeInDb: Float) = withContext(Dispatchers.Default) {
     synchronized(synthesizerMutex) {
       createNativeHandleIfNotExists()
       setVolume(synthesizerHandle, volumeInDb)
     }
   }
 
-  override fun setWavetable(wavetable: Wavetable) {
+  override suspend fun setWavetable(wavetable: Wavetable) = withContext(Dispatchers.Default) {
     synchronized(synthesizerMutex) {
       createNativeHandleIfNotExists()
-      setWavetable(synthesizerHandle, wavetable.ordinal);
+      setWavetable(synthesizerHandle, wavetable.ordinal)
     }
   }
 

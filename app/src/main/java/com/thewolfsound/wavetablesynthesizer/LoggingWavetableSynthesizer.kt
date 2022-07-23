@@ -6,29 +6,29 @@ class LoggingWavetableSynthesizer : WavetableSynthesizer {
 
   private var isPlaying = false
 
-  override fun play() {
+  override suspend fun play() {
     Log.d("LoggingWavetableSynthesizer", "play() called.")
     isPlaying = true
   }
 
-  override fun stop() {
+  override suspend fun stop() {
     Log.d("LoggingWavetableSynthesizer", "stop() called.")
     isPlaying = false
   }
 
-  override fun isPlaying(): Boolean {
+  override suspend fun isPlaying(): Boolean {
     return isPlaying
   }
 
-  override fun setFrequency(frequencyInHz: Float) {
+  override suspend fun setFrequency(frequencyInHz: Float) {
     Log.d("LoggingWavetableSynthesizer", "Frequency set to $frequencyInHz Hz.")
   }
 
-  override fun setVolume(volumeInDb: Float) {
+  override suspend fun setVolume(volumeInDb: Float) {
     Log.d("LoggingWavetableSynthesizer", "Volume set to $volumeInDb dB.")
   }
 
-  override fun setWavetable(wavetable: Wavetable) {
+  override suspend fun setWavetable(wavetable: Wavetable) {
     Log.d("LoggingWavetableSynthesizer", "Wavetable set to $wavetable")
   }
 }
