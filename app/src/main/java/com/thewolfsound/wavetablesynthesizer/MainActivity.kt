@@ -218,7 +218,7 @@ private fun WavetableButton(
   Button(modifier = modifier, onClick = {
     synthesizerViewModel.setWavetable(representedWavetable)
   }) {
-    Text(representedWavetable.toString())
+    Text(stringResource(representedWavetable.toResourceString()))
   }
 }
 

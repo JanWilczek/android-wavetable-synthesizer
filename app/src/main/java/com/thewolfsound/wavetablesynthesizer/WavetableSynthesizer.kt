@@ -1,7 +1,31 @@
 package com.thewolfsound.wavetablesynthesizer
 
 enum class Wavetable {
-  SINE, TRIANGLE, SQUARE, SAW
+  SINE {
+    override fun toResourceString(): Int {
+      return R.string.sine
+    }
+  },
+
+  TRIANGLE {
+    override fun toResourceString(): Int {
+      return R.string.triangle
+    }
+  },
+
+  SQUARE {
+    override fun toResourceString(): Int {
+      return R.string.square
+    }
+  },
+
+  SAW {
+    override fun toResourceString(): Int {
+      return R.string.sawtooth
+    }
+  };
+
+  abstract fun toResourceString(): Int
 }
 
 interface WavetableSynthesizer {
