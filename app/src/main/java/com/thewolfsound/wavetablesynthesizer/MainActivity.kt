@@ -107,11 +107,18 @@ private fun ControlsPanel(
 private fun PlayControl(modifier: Modifier, synthesizerViewModel: WavetableSynthesizerViewModel) {
   val playButtonLabel = synthesizerViewModel.playButtonLabel.observeAsState()
 
-  Button(modifier = modifier,
+  PlayControlContent(modifier = modifier,
     onClick = {
       synthesizerViewModel.playClicked()
-    }) {
-    Text(stringResource(playButtonLabel.value ?: R.string.play))
+    },
+    buttonLabel = stringResource(playButtonLabel.value ?: R.string.play))
+}
+
+@Composable
+private fun PlayControlContent(modifier: Modifier, onClick: () -> Unit, buttonLabel: String) {
+  Button(modifier = modifier,
+    onClick = onClick) {
+    Text(buttonLabel)
   }
 }
 
