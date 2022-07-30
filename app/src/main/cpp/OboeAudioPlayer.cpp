@@ -7,17 +7,22 @@
 using namespace oboe;
 
 namespace wavetablesynthesizer {
-
+#ifndef NDEBUG
 static std::atomic<int> instances{0};
+#endif
 
 OboeAudioPlayer::OboeAudioPlayer(std::shared_ptr<AudioSource> source,
                                  int samplingRate)
     : _source(std::move(source)), _samplingRate(samplingRate) {
+#ifndef NDEBUG
   LOGD("OboeAudioPlayer created. Instances count: %d", ++instances);
+#endif
 }
 
 OboeAudioPlayer::~OboeAudioPlayer() {
+#ifndef NDEBUG
   LOGD("OboeAudioPlayer destroyed. Instances count: %d", --instances);
+#endif
   OboeAudioPlayer::stop();
 }
 
