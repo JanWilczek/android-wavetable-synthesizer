@@ -121,7 +121,13 @@ private fun PitchControl(
   synthesizerViewModel: WavetableSynthesizerViewModel
 ) {
   val frequency = synthesizerViewModel.frequency.observeAsState()
-  val sliderPosition = rememberSaveable { mutableStateOf(synthesizerViewModel.sliderPositionFromFrequencyInHz(frequency.value ?: 300F)) }
+  val sliderPosition = rememberSaveable {
+    mutableStateOf(
+      synthesizerViewModel.sliderPositionFromFrequencyInHz(
+        frequency.value ?: 300F
+      )
+    )
+  }
 
   Text(stringResource(R.string.frequency))
   Slider(value = sliderPosition.value, onValueChange = {
@@ -138,10 +144,24 @@ private fun PitchControl(
 @Composable
 private fun VolumeControl(modifier: Modifier, synthesizerViewModel: WavetableSynthesizerViewModel) {
   val volume = synthesizerViewModel.volume.observeAsState()
+
+  VolumeControlContent(
+    modifier = modifier,
+    volume = volume.value ?: synthesizerViewModel.volumeRange.endInclusive,
+    volumeRange = synthesizerViewModel.volumeRange,
+    onValueChange = { synthesizerViewModel.setVolume(it) })
+}
+
+@Composable
+private fun VolumeControlContent(
+  modifier: Modifier,
+  volume: Float,
+  volumeRange: ClosedFloatingPointRange<Float>,
+  onValueChange: (Float) -> Unit
+) {
   // The volume slider should take around 1/4 of the screen height
   val screenHeight = LocalConfiguration.current.screenHeightDp
   val sliderHeight = screenHeight / 4
-
 
   Icon(imageVector = Icons.Filled.VolumeUp, contentDescription = null)
   Column(
@@ -154,12 +174,12 @@ private fun VolumeControl(modifier: Modifier, synthesizerViewModel: WavetableSyn
   )
   {
     Slider(
-      value = volume.value ?: synthesizerViewModel.volumeRange.endInclusive,
-      onValueChange = { synthesizerViewModel.setVolume(it) },
+      value = volume,
+      onValueChange = onValueChange,
       modifier = modifier
         .width(sliderHeight.dp)
         .rotate(270f),
-      valueRange = synthesizerViewModel.volumeRange
+      valueRange = volumeRange
     )
   }
   Icon(imageVector = Icons.Filled.VolumeMute, contentDescription = null)
@@ -202,8 +222,10 @@ private fun WavetableSelectionButtons(
     for (wavetable in Wavetable.values()) {
       WavetableButton(
         modifier = modifier,
-        representedWavetable = wavetable,
-        synthesizerViewModel = synthesizerViewModel
+        onClick = {
+          synthesizerViewModel.setWavetable(wavetable)
+        },
+        label = stringResource(wavetable.toResourceString()),
       )
     }
   }
@@ -212,13 +234,11 @@ private fun WavetableSelectionButtons(
 @Composable
 private fun WavetableButton(
   modifier: Modifier,
-  representedWavetable: Wavetable,
-  synthesizerViewModel: WavetableSynthesizerViewModel
+  onClick: () -> Unit,
+  label: String,
 ) {
-  Button(modifier = modifier, onClick = {
-    synthesizerViewModel.setWavetable(representedWavetable)
-  }) {
-    Text(stringResource(representedWavetable.toResourceString()))
+  Button(modifier = modifier, onClick = onClick) {
+    Text(label)
   }
 }
 
