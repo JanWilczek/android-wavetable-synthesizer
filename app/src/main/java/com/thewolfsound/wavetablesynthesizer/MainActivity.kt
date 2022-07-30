@@ -129,15 +129,35 @@ private fun PitchControl(
     )
   }
 
-  Text(stringResource(R.string.frequency))
-  Slider(value = sliderPosition.value, onValueChange = {
-    sliderPosition.value = it
-    synthesizerViewModel.setFrequencySlierPosition(it)
-  }, valueRange = 0F..1F)
+  PitchControlContent(
+    modifier = modifier,
+    pitchControlLabel = stringResource(R.string.frequency),
+    value = sliderPosition.value,
+    onValueChange = {
+      sliderPosition.value = it
+      synthesizerViewModel.setFrequencySlierPosition(it)
+    },
+    valueRange = 0F..1F,
+    frequencyValueLabel = stringResource(R.string.frequency_value, frequency.value ?: 0F)
+  )
+}
+
+@Composable
+private fun PitchControlContent(
+  modifier: Modifier,
+  pitchControlLabel: String,
+  value: Float,
+  onValueChange: (Float) -> Unit,
+  valueRange: ClosedFloatingPointRange<Float>,
+  frequencyValueLabel: String
+) {
+  Text(pitchControlLabel, modifier = modifier)
+  Slider(modifier = modifier, value = value, onValueChange = onValueChange, valueRange = valueRange)
   Row(
+    modifier = modifier,
     horizontalArrangement = Arrangement.Center
   ) {
-    Text(text = stringResource(R.string.frequency_value, frequency.value ?: 0F))
+    Text(modifier = modifier, text = frequencyValueLabel)
   }
 }
 
