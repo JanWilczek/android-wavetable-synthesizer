@@ -79,8 +79,8 @@ class WavetableSynthesizerViewModel : ViewModel() {
     return (ln(rangePosition) - ln(0.001F)) / (-ln(0.001F))
   }
 
-  private val _playButtonLabel = MutableLiveData("Play")
-  val playButtonLabel: LiveData<String>
+  private val _playButtonLabel = MutableLiveData(R.string.play)
+  val playButtonLabel: LiveData<Int>
     get() {
       return _playButtonLabel
     }
@@ -97,9 +97,9 @@ class WavetableSynthesizerViewModel : ViewModel() {
   private fun updatePlayButtonLabel() {
     viewModelScope.launch {
       if (wavetableSynthesizer?.isPlaying() == true) {
-        _playButtonLabel.value = "Stop"
+        _playButtonLabel.value = R.string.stop
       } else {
-        _playButtonLabel.value = "Play"
+        _playButtonLabel.value = R.string.play
       }
     }
   }

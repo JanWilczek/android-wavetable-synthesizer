@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -110,7 +111,7 @@ private fun PlayControl(modifier: Modifier, synthesizerViewModel: WavetableSynth
     onClick = {
       synthesizerViewModel.playClicked()
     }) {
-    Text(playButtonLabel.value ?: "")
+    Text(stringResource(playButtonLabel.value ?: R.string.play))
   }
 }
 
@@ -122,7 +123,7 @@ private fun PitchControl(
   val frequency = synthesizerViewModel.frequency.observeAsState()
   val sliderPosition = rememberSaveable { mutableStateOf(synthesizerViewModel.sliderPositionFromFrequencyInHz(frequency.value ?: 300F)) }
 
-  Text("Frequency")
+  Text(stringResource(R.string.frequency))
   Slider(value = sliderPosition.value, onValueChange = {
     sliderPosition.value = it
     synthesizerViewModel.setFrequencySlierPosition(it)
@@ -130,8 +131,7 @@ private fun PitchControl(
   Row(
     horizontalArrangement = Arrangement.Center
   ) {
-    Text(text = frequency.value.toString())
-    Text(" Hz")
+    Text(text = stringResource(R.string.frequency_value, frequency.value ?: 0F))
   }
 }
 
@@ -184,7 +184,7 @@ private fun WavetableSelectionPanel(
       verticalArrangement = Arrangement.SpaceEvenly,
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
-      Text("Wavetable")
+      Text(stringResource(R.string.wavetable))
       WavetableSelectionButtons(modifier, synthesizerViewModel)
     }
   }
