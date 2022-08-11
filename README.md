@@ -15,6 +15,7 @@ The goal of the app is to build a wavetable synthesizer on Android with basic co
 them in the user interface (UI) of the app.
 
 ![](https://thewolfsound.com/assets/img/posts/synthesis/android-wavetable-synthesizer/SynthesizerUI.webp)
+
 _Graphical user interface of the synthesizer app._
 
 The secondary goal is to use cutting-edge Android tools and practices like
