@@ -60,7 +60,6 @@ fun WavetableSynthesizerApp(
   modifier: Modifier,
   synthesizerViewModel: WavetableSynthesizerViewModel = viewModel()
 ) {
-  WavetableSynthesizerTheme {
     Column(
       modifier = Modifier.fillMaxSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
@@ -69,7 +68,6 @@ fun WavetableSynthesizerApp(
       WavetableSelectionPanel(modifier, synthesizerViewModel)
       ControlsPanel(modifier, synthesizerViewModel)
     }
-  }
 }
 
 @Composable
@@ -78,7 +76,7 @@ private fun ControlsPanel(
   synthesizerViewModel: WavetableSynthesizerViewModel
 ) {
   Row(
-    modifier = Modifier
+    modifier = modifier
       .fillMaxWidth()
       .fillMaxHeight(),
     horizontalArrangement = Arrangement.Center,
@@ -272,7 +270,9 @@ private fun WavetableButton(
 @Preview(showBackground = true, device = Devices.AUTOMOTIVE_1024p, widthDp = 1024, heightDp = 720)
 @Composable
 fun WavetableSynthesizerPreview() {
-  WavetableSynthesizerApp(Modifier, WavetableSynthesizerViewModel())
+  WavetableSynthesizerTheme {
+    WavetableSynthesizerApp(Modifier, WavetableSynthesizerViewModel())
+  }
 }
 
 @Preview(showBackground = true, widthDp = 100, heightDp = 200)
