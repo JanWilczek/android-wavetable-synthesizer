@@ -36,7 +36,7 @@ class WavetableSynthesizerViewModel : ViewModel() {
   /**
    * @param frequencySliderPosition slider position in [0, 1] range
    */
-  fun setFrequencySlierPosition(frequencySliderPosition: Float) {
+  fun setFrequencySliderPosition(frequencySliderPosition: Float) {
     val frequencyInHz = frequencyInHzFromSliderPosition(frequencySliderPosition)
     _frequency.value = frequencyInHz
     viewModelScope.launch {

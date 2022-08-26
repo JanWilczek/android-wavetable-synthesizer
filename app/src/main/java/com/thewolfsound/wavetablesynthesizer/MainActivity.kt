@@ -140,7 +140,7 @@ private fun PitchControl(
     value = sliderPosition.value,
     onValueChange = {
       sliderPosition.value = it
-      synthesizerViewModel.setFrequencySlierPosition(it)
+      synthesizerViewModel.setFrequencySliderPosition(it)
     },
     valueRange = 0F..1F,
     frequencyValueLabel = stringResource(R.string.frequency_value, frequency.value ?: 0F)
