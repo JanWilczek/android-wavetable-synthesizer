@@ -81,7 +81,7 @@ class WavetableSynthesizerViewModel : ViewModel() {
 
   companion object LinearToExponentialConverter {
 
-    const val MINIMUM_VALUE = 0.001f
+    private const val MINIMUM_VALUE = 0.001f
     fun linearToExponential(value: Float): Float {
       assert(value in 0f..1f)
 
@@ -93,8 +93,11 @@ class WavetableSynthesizerViewModel : ViewModel() {
       return exp(ln(0.001F) - ln(0.001F) * value)
     }
 
-    fun valueFromRangePosition(range: ClosedFloatingPointRange<Float>, rangePosition: Float) =
-      range.start + (range.endInclusive - range.start) * rangePosition
+    fun valueFromRangePosition(range: ClosedFloatingPointRange<Float>, rangePosition: Float): Float {
+      assert(rangePosition in 0f..1f)
+
+      return range.start + (range.endInclusive - range.start) * rangePosition
+    }
 
 
     fun rangePositionFromValue(range: ClosedFloatingPointRange<Float>, value: Float): Float {
