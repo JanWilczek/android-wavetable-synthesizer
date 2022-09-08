@@ -12,17 +12,17 @@ import kotlin.math.ln
 class WavetableSynthesizerViewModel : ViewModel() {
 
   var wavetableSynthesizer: WavetableSynthesizer? = null
-  set(value) {
-    field = value
-    applyParameters()
-  }
+    set(value) {
+      field = value
+      applyParameters()
+    }
 
   private val _frequency = MutableLiveData(300f)
   val frequency: LiveData<Float>
     get() {
       return _frequency
     }
-  val frequencyRange = 40f..3000f
+  private val frequencyRange = 40f..3000f
 
   private val _volume = MutableLiveData(-24f)
   val volume: LiveData<Float>
@@ -69,14 +69,50 @@ class WavetableSynthesizerViewModel : ViewModel() {
     }
   }
 
-  fun frequencyInHzFromSliderPosition(sliderPosition: Float): Float {
-    val rangePosition = if (sliderPosition == 0F) 0F else exp(ln(0.001F) - ln(0.001F) * sliderPosition)
-    return frequencyRange.start + (frequencyRange.endInclusive - frequencyRange.start) * rangePosition
+  private fun frequencyInHzFromSliderPosition(sliderPosition: Float): Float {
+    val rangePosition = linearToExponential(sliderPosition)
+    return valueFromRangePosition(frequencyRange, rangePosition)
   }
 
   fun sliderPositionFromFrequencyInHz(frequencyInHz: Float): Float {
-    val rangePosition = (frequencyInHz - frequencyRange.start) / (frequencyRange.endInclusive - frequencyRange.start)
-    return (ln(rangePosition) - ln(0.001F)) / (-ln(0.001F))
+    val rangePosition = rangePositionFromValue(frequencyRange, frequencyInHz)
+    return exponentialToLinear(rangePosition)
+  }
+
+  companion object LinearToExponentialConverter {
+
+    const val MINIMUM_VALUE = 0.001f
+    fun linearToExponential(value: Float): Float {
+      assert(value in 0f..1f)
+
+
+      if (value < MINIMUM_VALUE) {
+        return 0f
+      }
+
+      return exp(ln(0.001F) - ln(0.001F) * value)
+    }
+
+    fun valueFromRangePosition(range: ClosedFloatingPointRange<Float>, rangePosition: Float) =
+      range.start + (range.endInclusive - range.start) * rangePosition
+
+
+    fun rangePositionFromValue(range: ClosedFloatingPointRange<Float>, value: Float): Float {
+      assert(value in range)
+
+      return (value - range.start) / (range.endInclusive - range.start)
+    }
+
+
+    fun exponentialToLinear(rangePosition: Float): Float {
+      assert(rangePosition in 0f..1f)
+
+      if (rangePosition < MINIMUM_VALUE) {
+        return rangePosition
+      }
+
+      return (ln(rangePosition) - ln(MINIMUM_VALUE)) / (-ln(MINIMUM_VALUE))
+    }
   }
 
   private val _playButtonLabel = MutableLiveData(R.string.play)
