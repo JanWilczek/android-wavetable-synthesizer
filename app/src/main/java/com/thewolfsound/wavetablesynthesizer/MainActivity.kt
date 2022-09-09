@@ -34,10 +34,12 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
     lifecycle.addObserver(synthesizer)
+    // pass the synthesizer to the ViewModel
     synthesizerViewModel.wavetableSynthesizer = synthesizer
     setContent {
       WavetableSynthesizerTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+          // pass the ViewModel down the composables' hierarchy
           WavetableSynthesizerApp(Modifier, synthesizerViewModel)
         }
       }
@@ -103,13 +105,19 @@ private fun ControlsPanel(
 
 @Composable
 private fun PlayControl(modifier: Modifier, synthesizerViewModel: WavetableSynthesizerViewModel) {
+  // The label of the play button is now an observable state, an instance of State<Int?>.
+  // State<Int?> is used because the label is the id value of the resource string.
+  // Thanks to the fact that the composable observes the label,
+  // the composable will be recomposed (redrawn) when the observed state changes.
   val playButtonLabel = synthesizerViewModel.playButtonLabel.observeAsState()
 
   PlayControlContent(modifier = modifier,
+    // onClick handler now simply notifies the ViewModel that it has been clicked
     onClick = {
       synthesizerViewModel.playClicked()
     },
-    buttonLabel = stringResource(playButtonLabel.value ?: R.string.play))
+    // playButtonLabel will never be null; if it is, then we have a serious implementation issue
+    buttonLabel = stringResource(playButtonLabel.value!!))
 }
 
 @Composable
@@ -125,12 +133,16 @@ private fun PitchControl(
   modifier: Modifier,
   synthesizerViewModel: WavetableSynthesizerViewModel
 ) {
+  // if the frequency changes, recompose this composable
   val frequency = synthesizerViewModel.frequency.observeAsState()
+  // the slider position state is hoisted by this composable; no need to embed it into
+  // the ViewModel, which ideally, shouldn't be aware of the UI.
+  // When the slider position changes, this composable will be recomposed as we explained in
+  // the UI tutorial.
   val sliderPosition = rememberSaveable {
     mutableStateOf(
-      synthesizerViewModel.sliderPositionFromFrequencyInHz(
-        frequency.value ?: 300F
-      )
+      // we use the ViewModel's convenience function to get the initial slider position
+      synthesizerViewModel.sliderPositionFromFrequencyInHz(frequency.value!!)
     )
   }
 
@@ -138,12 +150,17 @@ private fun PitchControl(
     modifier = modifier,
     pitchControlLabel = stringResource(R.string.frequency),
     value = sliderPosition.value,
+    // on slider position change, update the slider position and the ViewModel
     onValueChange = {
       sliderPosition.value = it
       synthesizerViewModel.setFrequencySliderPosition(it)
     },
+    // this range is now [0, 1] because the ViewModel is responsible for calculating the frequency
+    // out of the slider position
     valueRange = 0F..1F,
-    frequencyValueLabel = stringResource(R.string.frequency_value, frequency.value ?: 0F)
+    // this label could be moved into the ViewModel but it doesn't have to be because this
+    // composable will anyway be recomposed on a frequency change
+    frequencyValueLabel = stringResource(R.string.frequency_value, frequency.value!!)
   )
 }
 
@@ -168,12 +185,17 @@ private fun PitchControlContent(
 
 @Composable
 private fun VolumeControl(modifier: Modifier, synthesizerViewModel: WavetableSynthesizerViewModel) {
+  // volume value is now an observable state; that means that the composable will be
+  // recomposed (redrawn) when the observed state changes.
   val volume = synthesizerViewModel.volume.observeAsState()
 
   VolumeControlContent(
     modifier = modifier,
-    volume = volume.value ?: synthesizerViewModel.volumeRange.endInclusive,
+    // volume value should never be null; if it is, there's a serious implementation issue
+    volume = volume.value!!,
+    // use the value range from the ViewModel
     volumeRange = synthesizerViewModel.volumeRange,
+    // on volume slider change, just update the ViewModel
     onValueChange = { synthesizerViewModel.setVolume(it) })
 }
 
@@ -247,9 +269,11 @@ private fun WavetableSelectionButtons(
     for (wavetable in Wavetable.values()) {
       WavetableButton(
         modifier = modifier,
+        // update the ViewModel when the given wavetable is clicked
         onClick = {
           synthesizerViewModel.setWavetable(wavetable)
         },
+        // set the label to the resource string that corresponds to the wavetable
         label = stringResource(wavetable.toResourceString()),
       )
     }

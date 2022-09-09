@@ -59,12 +59,14 @@ class WavetableSynthesizerViewModel : ViewModel() {
   }
 
   fun playClicked() {
+    // play() and stop() are suspended functions => we must launch a coroutine
     viewModelScope.launch {
       if (wavetableSynthesizer?.isPlaying() == true) {
         wavetableSynthesizer?.stop()
       } else {
         wavetableSynthesizer?.play()
       }
+      // Only when the synthesizer changed its state, update the button label.
       updatePlayButtonLabel()
     }
   }
