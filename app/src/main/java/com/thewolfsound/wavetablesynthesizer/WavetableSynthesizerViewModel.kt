@@ -92,7 +92,7 @@ class WavetableSynthesizerViewModel : ViewModel() {
         return 0f
       }
 
-      return exp(ln(0.001F) - ln(0.001F) * value)
+      return exp(ln(MINIMUM_VALUE) - ln(MINIMUM_VALUE) * value)
     }
 
     fun valueFromRangePosition(range: ClosedFloatingPointRange<Float>, rangePosition: Float): Float {
