@@ -63,7 +63,7 @@ fun WavetableSynthesizerApp(
   synthesizerViewModel: WavetableSynthesizerViewModel = viewModel()
 ) {
     Column(
-      modifier = Modifier.fillMaxSize(),
+      modifier = modifier.fillMaxSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Top,
     ) {
