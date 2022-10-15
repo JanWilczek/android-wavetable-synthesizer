@@ -16,19 +16,19 @@ class WavetableSynthesizer {
  public:
   WavetableSynthesizer();
 
-  virtual ~WavetableSynthesizer();
+  ~WavetableSynthesizer();
 
-  virtual void play();
+  void play();
 
-  virtual void stop();
+  void stop();
 
-  virtual bool isPlaying();
+  bool isPlaying();
 
-  virtual void setFrequency(float frequencyInHz);
+  void setFrequency(float frequencyInHz);
 
-  virtual void setVolume(float volumeInDb);
+  void setVolume(float volumeInDb);
 
-  virtual void setWavetable(Wavetable wavetable);
+  void setWavetable(Wavetable wavetable);
 
  private:
   bool _isPlaying = false;
