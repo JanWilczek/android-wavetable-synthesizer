@@ -22,7 +22,7 @@ class WavetableSynthesizer {
 
   void stop();
 
-  bool isPlaying();
+  bool isPlaying() const;
 
   void setFrequency(float frequencyInHz);
 

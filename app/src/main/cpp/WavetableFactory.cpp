@@ -2,10 +2,10 @@
 #include <cmath>
 #include <vector>
 #include "Wavetable.h"
+#include "MathConstants.h"
 
 namespace wavetablesynthesizer {
 static constexpr auto WAVETABLE_LENGTH = 256;
-static const auto PI = std::atan(1.f) * 4;
 
 std::vector<float> generateSineWaveTable() {
   auto sineWaveTable = std::vector<float>(WAVETABLE_LENGTH);

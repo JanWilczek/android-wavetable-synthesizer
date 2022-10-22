@@ -7,17 +7,18 @@ namespace wavetablesynthesizer {
 
 class WavetableOscillator : public AudioSource {
  public:
+  WavetableOscillator() = default;
   WavetableOscillator(std::vector<float> waveTable, float sampleRate);
 
   float getSample() override;
 
-  void setFrequency(float frequency);
+  virtual void setFrequency(float frequency);
 
-  void setAmplitude(float newAmplitude);
+  virtual void setAmplitude(float newAmplitude);
 
   void onPlaybackStopped() override;
 
-  void setWavetable(const std::vector<float>& wavetable);
+  virtual void setWavetable(const std::vector<float> &wavetable);
 
  private:
   float interpolateLinearly() const;
@@ -32,5 +33,24 @@ class WavetableOscillator : public AudioSource {
   std::atomic<bool> swapWavetable{false};
   std::vector<float> wavetableToSwap;
   std::atomic<bool> wavetableIsBeingSwapped{false};
+};
+
+class A4Oscillator : public WavetableOscillator {
+ public:
+  explicit A4Oscillator(float sampleRate);
+
+  float getSample() override;
+
+  void setFrequency(float frequency) override {};
+
+  void setAmplitude(float newAmplitude) override {};
+
+  void onPlaybackStopped() override;
+
+  void setWavetable(const std::vector<float> &wavetable) override {};
+
+ private:
+  float _phase{0.f};
+  float _phaseIncrement{0.f};
 };
 }  // namespace wavetablesynthesizer

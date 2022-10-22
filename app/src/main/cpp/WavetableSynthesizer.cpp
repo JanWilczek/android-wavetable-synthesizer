@@ -16,7 +16,7 @@ WavetableSynthesizer::WavetableSynthesizer()
 
 WavetableSynthesizer::~WavetableSynthesizer() = default;
 
-bool WavetableSynthesizer::isPlaying() {
+bool WavetableSynthesizer::isPlaying() const {
   LOGD("isPlaying() called");
   return _isPlaying;
 }
