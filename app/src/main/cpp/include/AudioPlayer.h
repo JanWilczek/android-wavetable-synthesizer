@@ -1,7 +1,5 @@
 #pragma once
 
-#include <oboe/Oboe.h>
-
 namespace wavetablesynthesizer {
 class AudioPlayer {
  public:
