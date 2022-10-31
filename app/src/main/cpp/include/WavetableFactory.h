@@ -1,7 +1,5 @@
 #pragma once
-#include <memory>
 #include <vector>
-#include "WavetableOscillator.h"
 
 namespace wavetablesynthesizer {
 enum class Wavetable;
