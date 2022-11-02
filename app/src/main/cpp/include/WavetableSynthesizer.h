@@ -31,7 +31,7 @@ class WavetableSynthesizer {
   void setWavetable(Wavetable wavetable);
 
  private:
-  bool _isPlaying = false;
+  std::atomic<bool> _isPlaying{false};
   std::mutex _mutex;
   WavetableFactory _wavetableFactory;
   Wavetable _currentWavetable{Wavetable::SINE};
