@@ -5,14 +5,15 @@
 #include "MathConstants.h"
 
 namespace wavetablesynthesizer {
-static constexpr auto WAVETABLE_LENGTH = 256;
+namespace {
+constexpr auto WAVETABLE_LENGTH = 256;
 
 std::vector<float> generateSineWaveTable() {
   auto sineWaveTable = std::vector<float>(WAVETABLE_LENGTH);
 
   for (auto i = 0; i < WAVETABLE_LENGTH; ++i) {
     sineWaveTable[i] =
-        std::sinf(2 * PI * static_cast<float>(i) / WAVETABLE_LENGTH);
+        std::sin(2 * PI * static_cast<float>(i) / WAVETABLE_LENGTH);
   }
 
   return sineWaveTable;
@@ -67,6 +68,17 @@ std::vector<float> generateSawWaveTable() {
   return sawWaveTable;
 }
 
+template <typename F>
+std::vector<float> generateWaveTableOnce(std::vector<float>& waveTable,
+                                         F&& generator) {
+  if (waveTable.empty()) {
+    waveTable = generator();
+  }
+
+  return waveTable;
+}
+}
+
 std::vector<float> WavetableFactory::getWaveTable(Wavetable wavetable) {
   switch (wavetable) {
     case Wavetable::SINE:
@@ -78,18 +90,8 @@ std::vector<float> WavetableFactory::getWaveTable(Wavetable wavetable) {
     case Wavetable::SAW:
       return sawWaveTable();
     default:
-      return {WAVETABLE_LENGTH, 0.f};
+      return std::vector<float>(WAVETABLE_LENGTH, 0.f);
   }
-}
-
-template <typename F>
-std::vector<float> generateWaveTableOnce(std::vector<float>& waveTable,
-                                         F&& generator) {
-  if (waveTable.empty()) {
-    waveTable = generator();
-  }
-
-  return waveTable;
 }
 
 std::vector<float> WavetableFactory::sineWaveTable() {
