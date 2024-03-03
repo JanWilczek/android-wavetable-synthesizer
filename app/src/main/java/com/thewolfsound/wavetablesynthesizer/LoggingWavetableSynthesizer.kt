@@ -24,8 +24,12 @@ class LoggingWavetableSynthesizer : WavetableSynthesizer {
     Log.d("LoggingWavetableSynthesizer", "Frequency set to $frequencyInHz Hz.")
   }
 
-  override suspend fun setVolume(volumeInDb: Float) {
-    Log.d("LoggingWavetableSynthesizer", "Volume set to $volumeInDb dB.")
+  override suspend fun setLeftVolume(volumeInDb: Float) {
+    Log.d("LoggingWavetableSynthesizer", "Volume Left set to $volumeInDb dB.")
+  }
+
+  override suspend fun setRightVolume(volumeInDb: Float) {
+    Log.d("LoggingWavetableSynthesizer", "Volume Right set to $volumeInDb dB.")
   }
 
   override suspend fun setWavetable(wavetable: Wavetable) {

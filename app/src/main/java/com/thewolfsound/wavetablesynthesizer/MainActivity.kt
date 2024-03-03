@@ -16,7 +16,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,14 +61,14 @@ fun WavetableSynthesizerApp(
   modifier: Modifier,
   synthesizerViewModel: WavetableSynthesizerViewModel = viewModel()
 ) {
-    Column(
-      modifier = modifier.fillMaxSize(),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.Top,
-    ) {
-      WavetableSelectionPanel(modifier, synthesizerViewModel)
-      ControlsPanel(modifier, synthesizerViewModel)
-    }
+  Column(
+    modifier = modifier.fillMaxSize(),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Top,
+  ) {
+    WavetableSelectionPanel(modifier, synthesizerViewModel)
+    ControlsPanel(modifier, synthesizerViewModel)
+  }
 }
 
 @Composable
@@ -91,14 +90,13 @@ private fun ControlsPanel(
       PitchControl(modifier, synthesizerViewModel)
       PlayControl(modifier, synthesizerViewModel)
     }
-    Column(
-      verticalArrangement = Arrangement.Center,
-      horizontalAlignment = Alignment.CenterHorizontally,
+    Row(
       modifier = modifier
         .fillMaxWidth()
         .fillMaxHeight()
     ) {
-      VolumeControl(modifier, synthesizerViewModel)
+      VolumeControlLeft(modifier, synthesizerViewModel)
+      VolumeControlRight(modifier, synthesizerViewModel)
     }
   }
 }
@@ -111,19 +109,23 @@ private fun PlayControl(modifier: Modifier, synthesizerViewModel: WavetableSynth
   // the composable will be recomposed (redrawn) when the observed state changes.
   val playButtonLabel = synthesizerViewModel.playButtonLabel.observeAsState()
 
-  PlayControlContent(modifier = modifier,
+  PlayControlContent(
+    modifier = modifier,
     // onClick handler now simply notifies the ViewModel that it has been clicked
     onClick = {
       synthesizerViewModel.playClicked()
     },
     // playButtonLabel will never be null; if it is, then we have a serious implementation issue
-    buttonLabel = stringResource(playButtonLabel.value!!))
+    buttonLabel = stringResource(playButtonLabel.value!!)
+  )
 }
 
 @Composable
 private fun PlayControlContent(modifier: Modifier, onClick: () -> Unit, buttonLabel: String) {
-  Button(modifier = modifier,
-    onClick = onClick) {
+  Button(
+    modifier = modifier,
+    onClick = onClick
+  ) {
     Text(buttonLabel)
   }
 }
@@ -184,10 +186,33 @@ private fun PitchControlContent(
 }
 
 @Composable
-private fun VolumeControl(modifier: Modifier, synthesizerViewModel: WavetableSynthesizerViewModel) {
+private fun VolumeControlLeft(
+  modifier: Modifier,
+  synthesizerViewModel: WavetableSynthesizerViewModel
+) {
   // volume value is now an observable state; that means that the composable will be
   // recomposed (redrawn) when the observed state changes.
-  val volume = synthesizerViewModel.volume.observeAsState()
+  val volume = synthesizerViewModel.volumeLeft.observeAsState()
+
+  VolumeControlContent(
+    modifier = modifier,
+    // volume value should never be null; if it is, there's a serious implementation issue
+    volume = volume.value!!,
+    // use the value range from the ViewModel
+    volumeRange = synthesizerViewModel.volumeRange,
+    volumePrefix = "Left",
+    // on volume slider change, just update the ViewModel
+    onValueChange = { synthesizerViewModel.setVolumeLeft(it) })
+}
+
+@Composable
+private fun VolumeControlRight(
+  modifier: Modifier,
+  synthesizerViewModel: WavetableSynthesizerViewModel
+) {
+  // volume value is now an observable state; that means that the composable will be
+  // recomposed (redrawn) when the observed state changes.
+  val volume = synthesizerViewModel.volumeRight.observeAsState()
 
   VolumeControlContent(
     modifier = modifier,
@@ -196,7 +221,9 @@ private fun VolumeControl(modifier: Modifier, synthesizerViewModel: WavetableSyn
     // use the value range from the ViewModel
     volumeRange = synthesizerViewModel.volumeRange,
     // on volume slider change, just update the ViewModel
-    onValueChange = { synthesizerViewModel.setVolume(it) })
+    onValueChange = { synthesizerViewModel.setVolumeRight(it) },
+    volumePrefix = "Right"
+  )
 }
 
 @Composable
@@ -204,32 +231,37 @@ private fun VolumeControlContent(
   modifier: Modifier,
   volume: Float,
   volumeRange: ClosedFloatingPointRange<Float>,
-  onValueChange: (Float) -> Unit
+  onValueChange: (Float) -> Unit,
+  volumePrefix: String
 ) {
   // The volume slider should take around 1/4 of the screen height
-  val screenHeight = LocalConfiguration.current.screenHeightDp
-  val sliderHeight = screenHeight / 4
-
-  Icon(imageVector = Icons.Filled.VolumeUp, contentDescription = null)
+  //  val screenHeight = LocalConfiguration.current.screenHeightDp
+  //  val sliderHeight = screenHeight / 4
   Column(
-    modifier = modifier
-      .fillMaxWidth()
-      .fillMaxHeight(0.8f)
-      .offset(y = 40.dp),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.SpaceBetween
-  )
-  {
-    Slider(
-      value = volume,
-      onValueChange = onValueChange,
-      modifier = modifier
-        .width(sliderHeight.dp)
-        .rotate(270f),
-      valueRange = volumeRange
-    )
+    modifier
+      .height(220.dp)
+      .width(120.dp),
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    Icon(imageVector = Icons.Filled.VolumeUp, contentDescription = null)
+    Column(
+      modifier
+        .fillMaxWidth(0.8F)
+        .fillMaxHeight(0.6f)
+        .offset(y = 20.dp)
+    ) {
+      Slider(
+        value = volume,
+        onValueChange = onValueChange,
+        modifier = modifier
+          .rotate(270f),
+        valueRange = volumeRange
+      )
+    }
+    Icon(imageVector = Icons.Filled.VolumeMute, contentDescription = null)
+    Text(text = "$volumePrefix ${volume.toInt()}", modifier = modifier)
   }
-  Icon(imageVector = Icons.Filled.VolumeMute, contentDescription = null)
 }
 
 @Composable
@@ -296,19 +328,5 @@ private fun WavetableButton(
 fun WavetableSynthesizerPreview() {
   WavetableSynthesizerTheme {
     WavetableSynthesizerApp(Modifier, WavetableSynthesizerViewModel())
-  }
-}
-
-@Preview(showBackground = true, widthDp = 100, heightDp = 200)
-@Composable
-fun VolumeControlPreview() {
-  Column(
-    verticalArrangement = Arrangement.Top,
-    horizontalAlignment = Alignment.CenterHorizontally,
-    modifier = Modifier
-      .fillMaxWidth()
-      .fillMaxHeight()
-  ) {
-    VolumeControl(modifier = Modifier, synthesizerViewModel = WavetableSynthesizerViewModel())
   }
 }

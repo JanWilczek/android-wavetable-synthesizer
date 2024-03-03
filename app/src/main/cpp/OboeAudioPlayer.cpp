@@ -60,15 +60,19 @@ void OboeAudioPlayer::stop() {
   _source->onPlaybackStopped();
 }
 
-DataCallbackResult OboeAudioPlayer::onAudioReady(oboe::AudioStream* audioStream,
-                                                 void* audioData,
+DataCallbackResult OboeAudioPlayer::onAudioReady(oboe::AudioStream *audioStream,
+                                                 void *audioData,
                                                  int32_t framesCount) {
-  auto* floatData = reinterpret_cast<float*>(audioData);
+  auto *floatData = reinterpret_cast<float *>(audioData);
 
   for (auto frame = 0; frame < framesCount; ++frame) {
     const auto sample = _source->getSample();
     for (auto channel = 0; channel < channelCount; ++channel) {
-      floatData[frame * channelCount + channel] = sample;
+      if (channel == 0) {
+        floatData[frame * channelCount + channel] = sample.first;
+      } else {
+        floatData[frame * channelCount + channel] = sample.second;
+      }
     }
   }
   return oboe::DataCallbackResult::Continue;

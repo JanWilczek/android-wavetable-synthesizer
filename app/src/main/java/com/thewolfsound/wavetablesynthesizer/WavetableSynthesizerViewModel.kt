@@ -24,11 +24,18 @@ class WavetableSynthesizerViewModel : ViewModel() {
     }
   private val frequencyRange = 40f..3000f
 
-  private val _volume = MutableLiveData(-24f)
-  val volume: LiveData<Float>
+  private val _volumeLeft = MutableLiveData(-24f)
+  val volumeLeft: LiveData<Float>
     get() {
-      return _volume
+      return _volumeLeft
     }
+
+  private val _volumeRight = MutableLiveData(-24f)
+  val volumeRight: LiveData<Float>
+    get() {
+      return _volumeRight
+    }
+
   val volumeRange = (-60f)..0f
 
   private var wavetable = Wavetable.SINE
@@ -44,10 +51,17 @@ class WavetableSynthesizerViewModel : ViewModel() {
     }
   }
 
-  fun setVolume(volumeInDb: Float) {
-    _volume.value = volumeInDb
+  fun setVolumeLeft(volumeInDb: Float) {
+    _volumeLeft.value = volumeInDb
     viewModelScope.launch {
-      wavetableSynthesizer?.setVolume(volumeInDb)
+      wavetableSynthesizer?.setLeftVolume(volumeInDb)
+    }
+  }
+
+  fun setVolumeRight(volumeInDb: Float) {
+    _volumeRight.value = volumeInDb
+    viewModelScope.launch {
+      wavetableSynthesizer?.setRightVolume(volumeInDb)
     }
   }
 
@@ -95,7 +109,10 @@ class WavetableSynthesizerViewModel : ViewModel() {
       return exp(ln(MINIMUM_VALUE) - ln(MINIMUM_VALUE) * value)
     }
 
-    fun valueFromRangePosition(range: ClosedFloatingPointRange<Float>, rangePosition: Float): Float {
+    fun valueFromRangePosition(
+      range: ClosedFloatingPointRange<Float>,
+      rangePosition: Float
+    ): Float {
       assert(rangePosition in 0f..1f)
 
       return range.start + (range.endInclusive - range.start) * rangePosition
@@ -129,7 +146,8 @@ class WavetableSynthesizerViewModel : ViewModel() {
   fun applyParameters() {
     viewModelScope.launch {
       wavetableSynthesizer?.setFrequency(frequency.value!!)
-      wavetableSynthesizer?.setVolume(volume.value!!)
+      wavetableSynthesizer?.setLeftVolume(volumeLeft.value!!)
+      wavetableSynthesizer?.setRightVolume(volumeLeft.value!!)
       wavetableSynthesizer?.setWavetable(wavetable)
       updatePlayButtonLabel()
     }

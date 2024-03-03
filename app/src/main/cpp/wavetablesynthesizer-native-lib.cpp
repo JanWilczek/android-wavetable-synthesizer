@@ -6,7 +6,7 @@
 extern "C" {
 JNIEXPORT jlong JNICALL
 Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_create(
-    JNIEnv* env,
+    JNIEnv *env,
     jobject obj) {
   auto synthesizer =
       std::make_unique<wavetablesynthesizer::WavetableSynthesizer>();
@@ -21,11 +21,11 @@ Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_create(
 
 JNIEXPORT void JNICALL
 Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_delete(
-    JNIEnv* env,
+    JNIEnv *env,
     jobject obj,
     jlong synthesizerHandle) {
-  auto* synthesizer =
-      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer*>(
+  auto *synthesizer =
+      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer *>(
           synthesizerHandle);
 
   if (not synthesizer) {
@@ -38,11 +38,11 @@ Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_delete(
 
 JNIEXPORT void JNICALL
 Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_play(
-    JNIEnv* env,
+    JNIEnv *env,
     jobject obj,
     jlong synthesizerHandle) {
-  auto* synthesizer =
-      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer*>(
+  auto *synthesizer =
+      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer *>(
           synthesizerHandle);
 
   if (synthesizer) {
@@ -56,11 +56,11 @@ Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_play(
 
 JNIEXPORT void JNICALL
 Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_stop(
-    JNIEnv* env,
+    JNIEnv *env,
     jobject obj,
     jlong synthesizerHandle) {
-  auto* synthesizer =
-      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer*>(
+  auto *synthesizer =
+      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer *>(
           synthesizerHandle);
 
   if (synthesizer) {
@@ -74,11 +74,11 @@ Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_stop(
 
 JNIEXPORT jboolean JNICALL
 Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_isPlaying(
-    JNIEnv* env,
+    JNIEnv *env,
     jobject obj,
     jlong synthesizerHandle) {
-  auto* synthesizer =
-      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer*>(
+  auto *synthesizer =
+      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer *>(
           synthesizerHandle);
 
   if (not synthesizer) {
@@ -93,12 +93,12 @@ Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_isPlaying(
 
 JNIEXPORT void JNICALL
 Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_setFrequency(
-    JNIEnv* env,
+    JNIEnv *env,
     jobject obj,
     jlong synthesizerHandle,
     jfloat frequencyInHz) {
-  auto* synthesizer =
-      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer*>(
+  auto *synthesizer =
+      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer *>(
           synthesizerHandle);
   const auto nativeFrequency = static_cast<float>(frequencyInHz);
 
@@ -112,18 +112,38 @@ Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_setFrequen
 }
 
 JNIEXPORT void JNICALL
-Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_setVolume(
-    JNIEnv* env,
+Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_setRightVolume(
+    JNIEnv *env,
     jobject obj,
     jlong synthesizerHandle,
     jfloat volumeInDb) {
-  auto* synthesizer =
-      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer*>(
+  auto *synthesizer =
+      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer *>(
           synthesizerHandle);
   const auto nativeVolume = static_cast<float>(volumeInDb);
 
   if (synthesizer) {
-    synthesizer->setVolume(nativeVolume);
+    synthesizer->setRightVolume(nativeVolume);
+  } else {
+    LOGD(
+        "Synthesizer not created. Please, create the synthesizer first by "
+        "calling create().");
+  }
+}
+
+JNIEXPORT void JNICALL
+Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_setLeftVolume(
+    JNIEnv *env,
+    jobject obj,
+    jlong synthesizerHandle,
+    jfloat volumeInDb) {
+  auto *synthesizer =
+      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer *>(
+          synthesizerHandle);
+  const auto nativeVolume = static_cast<float>(volumeInDb);
+
+  if (synthesizer) {
+    synthesizer->setLeftVolume(nativeVolume);
   } else {
     LOGD(
         "Synthesizer not created. Please, create the synthesizer first by "
@@ -133,21 +153,22 @@ Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_setVolume(
 
 JNIEXPORT void JNICALL
 Java_com_thewolfsound_wavetablesynthesizer_NativeWavetableSynthesizer_setWavetable(
-        JNIEnv* env,
-        jobject obj,
-        jlong synthesizerHandle,
-        jint wavetable) {
-    auto* synthesizer =
-            reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer*>(
-                    synthesizerHandle);
-    const auto nativeWavetable = static_cast<wavetablesynthesizer::Wavetable>(wavetable);
+    JNIEnv *env,
+    jobject obj,
+    jlong synthesizerHandle,
+    jint wavetable) {
+  auto *synthesizer =
+      reinterpret_cast<wavetablesynthesizer::WavetableSynthesizer *>(
+          synthesizerHandle);
+  const auto
+      nativeWavetable = static_cast<wavetablesynthesizer::Wavetable>(wavetable);
 
-    if (synthesizer) {
-        synthesizer->setWavetable(nativeWavetable);
-    } else {
-        LOGD(
-                "Synthesizer not created. Please, create the synthesizer first by "
-                "calling create().");
-    }
+  if (synthesizer) {
+    synthesizer->setWavetable(nativeWavetable);
+  } else {
+    LOGD(
+        "Synthesizer not created. Please, create the synthesizer first by "
+        "calling create().");
+  }
 }
 }

@@ -10,11 +10,15 @@ class WavetableOscillator : public AudioSource {
   WavetableOscillator() = default;
   WavetableOscillator(std::vector<float> waveTable, float sampleRate);
 
-  float getSample() override;
+  std::pair<float, float> getSample() override;
 
   virtual void setFrequency(float frequency);
 
   virtual void setAmplitude(float newAmplitude);
+
+  virtual void setLeftAmplitude(float newAmplitude);
+
+  virtual void setRightAmplitude(float newAmplitude);
 
   void onPlaybackStopped() override;
 
@@ -29,28 +33,11 @@ class WavetableOscillator : public AudioSource {
   std::vector<float> waveTable;
   float sampleRate;
   std::atomic<float> amplitude{1.f};
+  std::atomic<float> leftAmplitude{1.f};
+  std::atomic<float> rightAmplitude{1.f};
 
   std::atomic<bool> swapWavetable{false};
   std::vector<float> wavetableToSwap;
   std::atomic<bool> wavetableIsBeingSwapped{false};
-};
-
-class A4Oscillator : public WavetableOscillator {
- public:
-  explicit A4Oscillator(float sampleRate);
-
-  float getSample() override;
-
-  void setFrequency(float frequency) override {};
-
-  void setAmplitude(float newAmplitude) override {};
-
-  void onPlaybackStopped() override;
-
-  void setWavetable(const std::vector<float> &wavetable) override {};
-
- private:
-  float _phase{0.f};
-  float _phaseIncrement{0.f};
 };
 }  // namespace wavetablesynthesizer

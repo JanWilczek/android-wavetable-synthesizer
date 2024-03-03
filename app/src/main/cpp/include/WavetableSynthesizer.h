@@ -28,6 +28,10 @@ class WavetableSynthesizer {
 
   void setVolume(float volumeInDb);
 
+  void setLeftVolume(float volumeInDb);
+
+  void setRightVolume(float volumeInDb);
+
   void setWavetable(Wavetable wavetable);
 
  private:

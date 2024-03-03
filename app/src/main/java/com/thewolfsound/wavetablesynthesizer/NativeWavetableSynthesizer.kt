@@ -15,7 +15,8 @@ class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserve
   private external fun stop(synthesizerHandle: Long)
   private external fun isPlaying(synthesizerHandle: Long): Boolean
   private external fun setFrequency(synthesizerHandle: Long, frequencyInHz: Float)
-  private external fun setVolume(synthesizerHandle: Long, amplitudeInDb: Float)
+  private external fun setLeftVolume(synthesizerHandle: Long, amplitudeInDb: Float)
+  private external fun setRightVolume(synthesizerHandle: Long, amplitudeInDb: Float)
   private external fun setWavetable(synthesizerHandle: Long, wavetable: Int)
 
   companion object {
@@ -78,10 +79,17 @@ class NativeWavetableSynthesizer : WavetableSynthesizer, DefaultLifecycleObserve
     }
   }
 
-  override suspend fun setVolume(volumeInDb: Float) = withContext(Dispatchers.Default) {
+  override suspend fun setLeftVolume(volumeInDb: Float) = withContext(Dispatchers.Default) {
     synchronized(synthesizerMutex) {
       createNativeHandleIfNotExists()
-      setVolume(synthesizerHandle, volumeInDb)
+      setLeftVolume(synthesizerHandle, volumeInDb)
+    }
+  }
+
+  override suspend fun setRightVolume(volumeInDb: Float) = withContext(Dispatchers.Default) {
+    synchronized(synthesizerMutex) {
+      createNativeHandleIfNotExists()
+      setRightVolume(synthesizerHandle, volumeInDb)
     }
   }
 

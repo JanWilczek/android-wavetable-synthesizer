@@ -8,13 +8,16 @@ WavetableOscillator::WavetableOscillator(std::vector<float> waveTable,
                                          float sampleRate)
     : waveTable{std::move(waveTable)}, sampleRate{sampleRate} {}
 
-float WavetableOscillator::getSample() {
+std::pair<float, float> WavetableOscillator::getSample() {
   swapWavetableIfNecessary();
 
   index = std::fmod(index, static_cast<float>(waveTable.size()));
   const auto sample = interpolateLinearly();
   index += indexIncrement;
-  return amplitude * sample;
+  float leftSample = leftAmplitude * sample;
+  float rightSample = rightAmplitude * sample;
+
+  return std::make_pair(leftSample, rightSample);
 }
 
 void WavetableOscillator::swapWavetableIfNecessary() {
@@ -48,6 +51,14 @@ void WavetableOscillator::setAmplitude(float newAmplitude) {
   amplitude.store(newAmplitude);
 }
 
+void WavetableOscillator::setLeftAmplitude(float newAmplitude) {
+  leftAmplitude.store(newAmplitude);
+}
+
+void WavetableOscillator::setRightAmplitude(float newAmplitude) {
+  rightAmplitude.store(newAmplitude);
+}
+
 void WavetableOscillator::setWavetable(const std::vector<float> &wavetable) {
   // Wait for the previous swap to take place if the oscillator is playing
   swapWavetable.store(false, std::memory_order_release);
@@ -55,18 +66,5 @@ void WavetableOscillator::setWavetable(const std::vector<float> &wavetable) {
   }
   wavetableToSwap = wavetable;
   swapWavetable.store(true, std::memory_order_release);
-}
-
-A4Oscillator::A4Oscillator(float sampleRate)
-    : _phaseIncrement{2.f * PI * 440.f / sampleRate} {}
-
-float A4Oscillator::getSample() {
-  const auto sample = 0.5f * std::sin(_phase);
-  _phase = std::fmod(_phase + _phaseIncrement, 2.f * PI);
-  return sample;
-}
-
-void A4Oscillator::onPlaybackStopped() {
-  _phase = 0.f;
 }
 }  // namespace wavetablesynthesizer

@@ -9,13 +9,19 @@ namespace {
 constexpr auto WAVETABLE_LENGTH = 256;
 
 std::vector<float> generateSineWaveTable() {
-  auto sineWaveTable = std::vector<float>(WAVETABLE_LENGTH);
+//  auto sineWaveTable = std::vector<float>(WAVETABLE_LENGTH);
+//
+//  for (auto i = 0; i < WAVETABLE_LENGTH; ++i) {
+//    sineWaveTable[i] =
+//        std::sin(2 * PI * static_cast<float>(i) / WAVETABLE_LENGTH);
+//  }
+//
+//  return sineWaveTable;
 
-  for (auto i = 0; i < WAVETABLE_LENGTH; ++i) {
-    sineWaveTable[i] =
-        std::sin(2 * PI * static_cast<float>(i) / WAVETABLE_LENGTH);
+  std::vector<float> sineWaveTable(WAVETABLE_LENGTH);
+  for (int i = 0; i < WAVETABLE_LENGTH; ++i) {
+    sineWaveTable[i] = std::sin(2 * M_PI * i / WAVETABLE_LENGTH);
   }
-
   return sineWaveTable;
 }
 
